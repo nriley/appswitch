@@ -29,6 +29,9 @@ name, followed by the application name.  For example, the Finder's
 bundle identifier is
 .Ar com.apple.Finder .
 Bundle identifiers are not case-sensitive.
+.Pp
+If you're extremely concerned about the speed of matching, any other
+match method is faster than a match by bundle identifier.
 .It Fl p Ar pid
 Match by process identifier, a positive number.
 .It Ar path
@@ -69,15 +72,24 @@ TruBlueEnvironment, a single Mac OS X process, their process
 identifiers appear as -1.
 .It TYPE
 The four-character code identifying the application's type,
-usually 'APPL' for most applications or 'FNDR' for the Finder.
-Classic applications include additional types such as 'appe'
-and 'APPC' for applications which perform the functions of extensions
+usually 
+.Ql APPL
+for most applications or
+.Ql FNDR
+for the Finder.
+Classic applications include additional types such as
+.Ql appe
+and
+.Ql APPC
+for applications which perform the functions of extensions
 and control panels, respectively.
 .It CREA
 The four-character code identifying the application's creator, usable with the
 .Fl c
 matching option. Some Mac OS X applications have no creator, appearing
-as '????'; for these applications you must use the bundle identifier,
+as 
+.Ql ???? ;
+for these applications you must use the bundle identifier,
 name or path as match criteria.
 .It NAME
 The user-visible application name, usable with the
