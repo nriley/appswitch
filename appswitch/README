@@ -1,4 +1,4 @@
-appswitch 1.0.1 [19 April 2004]
+appswitch 1.0.1 [16 May 2004]
 ===============
 
 A command-line interface to the Mac OS X process manager.
@@ -41,10 +41,10 @@ Uninstallation:
 COMPILATION
 -----------
 
-A Project Builder project, 'appswitch.pbproj', is included.  A
-precompiled binary is also provided.  'appswitch' was developed and
-tested under Mac OS 10.3.3 with the April 2004 Developer Tools,
-and does not require any additional software to build.
+An Xcode project, 'appswitch.xcode', is included.  A precompiled
+binary is also provided.  'appswitch' was developed and tested under
+Mac OS 10.3.3 with the April 2004 Developer Tools, and does not
+require any additional software to build.
 
 USAGE
 -----
@@ -55,11 +55,12 @@ manual page (man appswitch) for more information.
 If you're curious about the speed difference between appswitch and
 other methods, this should give you some indication.
 
-appswitch -a Emacs          0.00s user 0.02s system  5% cpu 0.355 total
-appswitch -i com.gnu.Emacs  0.01s user 0.04s system 13% cpu 0.381 total
-open -a Emacs               0.30s user 0.15s system 53% cpu 0.842 total
+appswitch -a Emacs          0.00s user 0.02s system 55% cpu 0.054 total
+appswitch -i com.gnu.Emacs  0.00s user 0.04s system 63% cpu 0.063 total
+open -a Emacs               0.32s user 0.12s system 50% cpu 0.876 total
+launch -a Emacs	            0.00s user 0.03s system 35% cpu 0.085 total
 osascript -e 'tell application "Emacs" to activate'
-                            0.66s user 0.42s system 45% cpu 2.361 total
+                            0.41s user 0.23s system 67% cpu 0.949 total
 
 The above tests were performed on a PowerBook G4/800; slower systems
 should show more dramatic differences.
@@ -72,8 +73,9 @@ Please send to the author, Nicholas Riley, at <appswitch@sabi.net>.
 VERSION HISTORY
 ---------------
 
-1.0.1 - 19 April 2004
-- fixed crash matching applications with no bundle identifier
+1.0.1 - 16 May 2004
+ - fixed crash matching applications with no bundle identifier
+ - fixed process listing PSN column width
 1.0   - 19 February 2003
  - added description of -q delay bug (no workaround)
 1.0b3 - 13 February 2003

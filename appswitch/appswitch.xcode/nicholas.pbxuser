@@ -1,7 +1,7 @@
 // !$*UTF8*$!
 {
 	08FB7793FE84155DC02AAC07 = {
-		activeBuildStyle = 014CEA490018CE3211CA2923;
+		activeBuildStyle = 014CEA4A0018CE3211CA2923;
 		activeExecutable = E1A0BD2C03EFAD1C00050001;
 		activeTarget = 08FB779FFE84155DC02AAC07;
 		addToTargets = (
@@ -50,7 +50,7 @@
 					PBXFileDataSource_Target_ColumnID,
 				);
 			};
-			PBXPerProjectTemplateStateSaveDate = 104034524;
+			PBXPerProjectTemplateStateSaveDate = 106378266;
 			PBXPrepackagedSmartGroups_v2 = (
 				{
 					PBXTransientLocationAtTop = bottom;
@@ -225,36 +225,36 @@
 							_percentageOfCollapsedView = 0;
 							isCollapsed = yes;
 							sizes = (
-								"{{0, 0}, {571, 118}}",
-								"{{0, 118}, {571, 547}}",
+								"{{0, 0}, {571, 121}}",
+								"{{0, 121}, {571, 544}}",
 							);
 						};
 						PBXProjectWorkspaceModule_DataSourceSelectionKey_Rev6 = {
-							BoundsStr = "{{0, 0}, {556, 101}}";
+							BoundsStr = "{{0, 0}, {556, 104}}";
 							Rows = (
 								0,
 							);
-							VisibleRectStr = "{{0, 0}, {556, 101}}";
+							VisibleRectStr = "{{0, 0}, {556, 104}}";
 						};
 						PBXProjectWorkspaceModule_EditorOpen = true;
 						PBXProjectWorkspaceModule_EmbeddedNavigatorGroup = {
 							PBXSplitModuleInNavigatorKey = {
 								Split0 = {
-									bookmark = E1737411063370F0002A81F1;
+									bookmark = E1CC5D69065735A3001A87C9;
 									history = (
-										E18A0A500633657C008DC67C,
 										E18A0A5B0633660A008DC67C,
 										E18A0A6B06336B3F008DC67C,
-										E18A0A6F06336B56008DC67C,
 										E173740F063370F0002A81F1,
 										E18A0A3A06336491008DC67C,
+										E1CC5D67065735A3001A87C9,
+										E18A0A500633657C008DC67C,
 									);
 									prevStack = (
 										E18A0A3C06336491008DC67C,
 										E18A0A6306336B3C008DC67C,
 										E18A0A6806336B3E008DC67C,
 										E18A0A6C06336B3F008DC67C,
-										E1737410063370F0002A81F1,
+										E1CC5D68065735A3001A87C9,
 									);
 								};
 								SplitCount = 1;
@@ -271,8 +271,8 @@
 								);
 							};
 						};
-						PBXProjectWorkspaceModule_OldDetailFrame = "{{0, 0}, {571, 118}}";
-						PBXProjectWorkspaceModule_OldEditorFrame = "{{0, 118}, {571, 547}}";
+						PBXProjectWorkspaceModule_OldDetailFrame = "{{0, 0}, {571, 121}}";
+						PBXProjectWorkspaceModule_OldEditorFrame = "{{0, 121}, {571, 544}}";
 						PBXProjectWorkspaceModule_OldSuperviewFrame = "{{182, 0}, {571, 665}}";
 						PBXProjectWorkspaceModule_SGTM = {
 							PBXBottomSmartGroupGIDs = (
@@ -303,7 +303,9 @@
 								);
 								PBXSmartGroupTreeModuleOutlineStateSelectionKey = (
 									(
-										10,
+										6,
+										4,
+										0,
 									),
 								);
 								PBXSmartGroupTreeModuleOutlineStateVisibleRectKey = "{{0, 0}, {165, 647}}";
@@ -469,12 +471,10 @@
 				};
 				RubberWindowFrame = "46 125 753 707 0 0 1280 832 ";
 			};
-			PBXWorkspaceStateSaveDate = 104034524;
+			PBXWorkspaceStateSaveDate = 106378266;
 		};
 		perUserProjectItems = {
 			E173740F063370F0002A81F1 = E173740F063370F0002A81F1;
-			E1737410063370F0002A81F1 = E1737410063370F0002A81F1;
-			E1737411063370F0002A81F1 = E1737411063370F0002A81F1;
 			E18A0A3A06336491008DC67C = E18A0A3A06336491008DC67C;
 			E18A0A3C06336491008DC67C = E18A0A3C06336491008DC67C;
 			E18A0A500633657C008DC67C = E18A0A500633657C008DC67C;
@@ -483,7 +483,9 @@
 			E18A0A6806336B3E008DC67C = E18A0A6806336B3E008DC67C;
 			E18A0A6B06336B3F008DC67C = E18A0A6B06336B3F008DC67C;
 			E18A0A6C06336B3F008DC67C = E18A0A6C06336B3F008DC67C;
-			E18A0A6F06336B56008DC67C = E18A0A6F06336B56008DC67C;
+			E1CC5D67065735A3001A87C9 = E1CC5D67065735A3001A87C9;
+			E1CC5D68065735A3001A87C9 = E1CC5D68065735A3001A87C9;
+			E1CC5D69065735A3001A87C9 = E1CC5D69065735A3001A87C9;
 		};
 		sourceControlManager = E18A0A29063362FF008DC67C;
 		userBuildSettings = {
@@ -491,9 +493,9 @@
 	};
 	08FB7796FE84155DC02AAC07 = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {709, 5843}}";
-			sepNavSelRange = "{14100, 30}";
-			sepNavVisRect = "{{0, 4189}, {709, 443}}";
+			sepNavIntBoundsRect = "{{0, 0}, {530, 6287}}";
+			sepNavSelRange = "{16945, 0}";
+			sepNavVisRect = "{{0, 5419}, {530, 527}}";
 			sepNavWindowFrame = "{{15, 325}, {750, 502}}";
 		};
 	};
@@ -512,9 +514,9 @@
 	};
 	E16C83CC03F7AF7B00050002 = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {530, 1036}}";
-			sepNavSelRange = "{0, 0}";
-			sepNavVisRect = "{{0, 0}, {530, 533}}";
+			sepNavIntBoundsRect = "{{0, 0}, {530, 1163}}";
+			sepNavSelRange = "{3337, 0}";
+			sepNavVisRect = "{{0, 456}, {530, 527}}";
 		};
 	};
 	E16C842F03FB74A500050002 = {
@@ -534,31 +536,6 @@
 		rType = 0;
 		vrLen = 1440;
 		vrLoc = 4186;
-	};
-	E1737410063370F0002A81F1 = {
-		fRef = C6859E970290921104C91782;
-		isa = PBXTextBookmark;
-		name = "appswitch.1: 4";
-		rLen = 0;
-		rLoc = 122;
-		rType = 0;
-		vrLen = 1440;
-		vrLoc = 4186;
-	};
-	E1737411063370F0002A81F1 = {
-		exec = E1A0BD2C03EFAD1C00050001;
-		isa = PBXExecutableBookmark;
-		uiCtxt = {
-			buildSettingsExpandedSubviews = (
-				0,
-				1,
-				2,
-				3,
-				4,
-				5,
-			);
-			buildSettingsVisRect = "{{0, 0}, {556, 498}}";
-		};
 	};
 	E18A0A29063362FF008DC67C = {
 		isa = PBXSourceControlManager;
@@ -662,16 +639,6 @@
 		vrLen = 570;
 		vrLoc = 0;
 	};
-	E18A0A6F06336B56008DC67C = {
-		fRef = 08FB7796FE84155DC02AAC07;
-		isa = PBXTextBookmark;
-		name = "main.c: 463";
-		rLen = 0;
-		rLoc = 18890;
-		rType = 0;
-		vrLen = 1696;
-		vrLoc = 17194;
-	};
 	E1A0BD2C03EFAD1C00050001 = {
 		activeArgIndex = 2147483647;
 		activeArgIndices = (
@@ -698,5 +665,35 @@
 			sepNavSelRange = "{0, 0}";
 			sepNavVisRect = "{{0, 0}, {530, 533}}";
 		};
+	};
+	E1CC5D67065735A3001A87C9 = {
+		fRef = 08FB7796FE84155DC02AAC07;
+		isa = PBXTextBookmark;
+		name = "main.c: 420";
+		rLen = 0;
+		rLoc = 17006;
+		rType = 0;
+		vrLen = 1569;
+		vrLoc = 16415;
+	};
+	E1CC5D68065735A3001A87C9 = {
+		fRef = 08FB7796FE84155DC02AAC07;
+		isa = PBXTextBookmark;
+		name = "main.c: 420";
+		rLen = 0;
+		rLoc = 17006;
+		rType = 0;
+		vrLen = 1569;
+		vrLoc = 16415;
+	};
+	E1CC5D69065735A3001A87C9 = {
+		fRef = E16C83CC03F7AF7B00050002;
+		isa = PBXTextBookmark;
+		name = "README: 97";
+		rLen = 0;
+		rLoc = 3337;
+		rType = 0;
+		vrLen = 1567;
+		vrLoc = 1280;
 	};
 }

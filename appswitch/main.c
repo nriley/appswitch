@@ -23,7 +23,7 @@
 
 const char *APP_NAME;
 
-#define VERSION "1.0"
+#define VERSION "1.0.1"
 
 struct {
     OSType creator;
@@ -307,13 +307,13 @@ CPSProcessSerNum matchApplication(CPSProcessInfoRec *info) {
     if (OPTS.appAction == APP_LIST) {
         int termwidth = 80;
         struct winsize ws;
-        char *banner = "       PSN   PID TYPE CREA NAME                ";
-                     // 12345678.0 12345 1234 1234 12345678901234567890
+        char *banner = "        PSN   PID TYPE CREA NAME               ";
+                     // 123456789.0 12345 1234 1234 1234567890123456789
         if ((ioctl(STDOUT_FILENO, TIOCGWINSZ, (char *)&ws) != -1 ||
              ioctl(STDERR_FILENO, TIOCGWINSZ, (char *)&ws) != -1 ||
              ioctl(STDIN_FILENO,  TIOCGWINSZ, (char *)&ws) != -1) ||
             ws.ws_col != 0) termwidth = ws.ws_col;
-        char *formatButPath = "%8ld.%ld %5ld %c%c%c%c %c%c%c%c %-20.20s";
+        char *formatButPath = "%9ld.%ld %5ld %c%c%c%c %c%c%c%c %-19.19s";
         int pathlen = termwidth - strlen(banner) - 1;
         // XXX don't ever free 'format', should fix if we get called repeatedly
         if (OPTS.longList) {
@@ -403,7 +403,7 @@ CPSProcessSerNum matchApplication(CPSProcessInfoRec *info) {
     return psn;
 }
 
-int main (int argc, char * const argv[]) {
+int main(int argc, char * const argv[]) {
     OSStatus err = noErr;
 
     APP_NAME = argv[0];
@@ -415,7 +415,7 @@ int main (int argc, char * const argv[]) {
     CPSProcessInfoRec info;
     CPSProcessSerNum psn = matchApplication(&info);
 
-    const char *verb;
+    const char *verb = NULL;
     switch (OPTS.appAction) {
         case APP_NONE: break;
         case APP_LIST: break; // already handled in matchApplication

@@ -4,18 +4,20 @@ set -x -v
 
 cd appswitch && \
 find . -name \*~ -exec rm '{}' \; && \
-pbxbuild && \ 
+xcodebuild && \
 SetFile -c 'R*ch' -t 'TEXT' README VERSION && \
 strip build/appswitch && \
 sudo /usr/bin/install -c build/appswitch /usr/local/bin && \
 sudo /usr/bin/install -c appswitch.1 /usr/local/man/man1 && \
+chmod 755 build/appswitch && \
+chmod 644 appswitch.1 && \
 rm -rf build/appswitch.build build/intermediates build/.gdb_history && \
 VERSION=`cat VERSION` TARBALL="appswitch-$VERSION.tar.gz" && \
 DMG="appswitch-$VERSION.dmg" VOL="appswitch $VERSION" MOUNTPOINT="/Volumes/$VOL" && \
 cd .. && \
 rm -f appswitch-$VERSION $TARBALL $DMG && \
 ln -s appswitch appswitch-$VERSION && \
-tar --exclude=.DS_Store --exclude=.svn -zchf appswitch-$VERSION.tar.gz appswitch-$VERSION && \
+tar --owner=root --group=wheel --exclude=.DS_Store --exclude=.svn --exclude=.gdb_history -zchf appswitch-$VERSION.tar.gz appswitch-$VERSION && \
 #hdiutil create $DMG -megabytes 5 -ov -type UDIF && \
 #DISK=`hdid $DMG | sed -ne ' /Apple_partition_scheme/ s|^/dev/\([^ ]*\).*$|\1|p'` && \
 #newfs_hfs -v "$VOL" /dev/r${DISK}s2 && \
