@@ -20,7 +20,7 @@
 						Split0 = {
 							Split0 = {
 								NavContent0 = {
-									bookmark = E1098C8203FDAAC300050002;
+									bookmark = E1B46F540404978A00050002;
 									history = (
 										E16C83D103F83AD700050002,
 										E16C83D203F83AD700050002,
@@ -34,14 +34,11 @@
 										E16C83DA03F83AD700050002,
 										E16C83DB03F83AD700050002,
 										E16C83DD03F83AD700050002,
-										E16C83DE03F83AD700050002,
-										E16C83DF03F83AD700050002,
 										E16C840303FB5E7100050002,
 										E16C842A03FB74A500050002,
-										E132404B03FD7BD400050002,
-									);
-									nextStack = (
-										E16C842C03FB74A500050002,
+										E1B46F500404978A00050002,
+										E1B46F510404978A00050002,
+										E16C83DE03F83AD700050002,
 									);
 									prevStack = (
 										E16C83E103F83AD700050002,
@@ -56,11 +53,13 @@
 										E16C83EA03F83AD700050002,
 										E16C83EB03F83AD700050002,
 										E16C83EC03F83AD700050002,
+										E1B46F520404978A00050002,
+										E1B46F530404978A00050002,
 									);
 								};
 								NavCount = 1;
 								NavGeometry0 = {
-									Frame = "{{0, 0}, {729, 633}}";
+									Frame = "{{0, 0}, {746, 633}}";
 									NavBarVisible = YES;
 								};
 								NavSplitVertical = NO;
@@ -131,15 +130,15 @@
 				{
 					ContentSize = "{1018, 656}";
 					LeftSlideOut = {
-						ActiveTab = 0;
-						ActiveTabName = PBXGroupTreeModule;
+						ActiveTab = 1;
+						ActiveTabName = PBXClassBrowserModule;
 						Collapsed = NO;
 						Frame = "{{0, 23}, {1018, 633}}";
 						Split0 = {
 							Collapsed = NO;
-							Frame = "{{289, 0}, {729, 633}}";
+							Frame = "{{272, 0}, {746, 633}}";
 							Split0 = {
-								Frame = "{{0, 0}, {729, 633}}";
+								Frame = "{{0, 0}, {746, 633}}";
 							};
 							SplitCount = 1;
 							Tab0 = {
@@ -210,15 +209,15 @@
 							);
 						};
 						Tab1 = {
-							ClassesFrame = "{{0, 0}, {250, 333}}";
+							ClassesFrame = "{{0, 0}, {250, 381}}";
 							ClassesTreeTableConfiguration = (
 								PBXBookColumnIdentifier,
 								20,
 								PBXClassColumnIdentifier,
 								207,
 							);
-							Frame = "{{0, 0}, {248, 554}}";
-							MembersFrame = "{{0, 342}, {250, 212}}";
+							Frame = "{{0, 0}, {248, 633}}";
+							MembersFrame = "{{0, 390}, {250, 243}}";
 							MembersTreeTableConfiguration = (
 								PBXBookColumnIdentifier,
 								20,
@@ -388,8 +387,6 @@
 			PBXWorkspaceStateSaveDate = 67398120;
 		};
 		perUserProjectItems = {
-			E1098C8203FDAAC300050002 = E1098C8203FDAAC300050002;
-			E132404B03FD7BD400050002 = E132404B03FD7BD400050002;
 			E16C83D103F83AD700050002 = E16C83D103F83AD700050002;
 			E16C83D203F83AD700050002 = E16C83D203F83AD700050002;
 			E16C83D303F83AD700050002 = E16C83D303F83AD700050002;
@@ -403,7 +400,6 @@
 			E16C83DB03F83AD700050002 = E16C83DB03F83AD700050002;
 			E16C83DD03F83AD700050002 = E16C83DD03F83AD700050002;
 			E16C83DE03F83AD700050002 = E16C83DE03F83AD700050002;
-			E16C83DF03F83AD700050002 = E16C83DF03F83AD700050002;
 			E16C83E103F83AD700050002 = E16C83E103F83AD700050002;
 			E16C83E203F83AD700050002 = E16C83E203F83AD700050002;
 			E16C83E303F83AD700050002 = E16C83E303F83AD700050002;
@@ -418,7 +414,11 @@
 			E16C83EC03F83AD700050002 = E16C83EC03F83AD700050002;
 			E16C840303FB5E7100050002 = E16C840303FB5E7100050002;
 			E16C842A03FB74A500050002 = E16C842A03FB74A500050002;
-			E16C842C03FB74A500050002 = E16C842C03FB74A500050002;
+			E1B46F500404978A00050002 = E1B46F500404978A00050002;
+			E1B46F510404978A00050002 = E1B46F510404978A00050002;
+			E1B46F520404978A00050002 = E1B46F520404978A00050002;
+			E1B46F530404978A00050002 = E1B46F530404978A00050002;
+			E1B46F540404978A00050002 = E1B46F540404978A00050002;
 		};
 		projectwideBuildSettings = {
 		};
@@ -430,26 +430,6 @@
 		executables = (
 			E1A0BD2C03EFAD1C00050001,
 		);
-	};
-	E1098C8203FDAAC300050002 = {
-		fRef = 08FB7796FE84155DC02AAC07;
-		isa = PBXTextBookmark;
-		name = "main.c: matchApplication";
-		rLen = 0;
-		rLoc = 11680;
-		rType = 0;
-		vrLen = 1813;
-		vrLoc = 10964;
-	};
-	E132404B03FD7BD400050002 = {
-		fRef = 08FB7796FE84155DC02AAC07;
-		isa = PBXTextBookmark;
-		name = "main.c: matchApplication";
-		rLen = 0;
-		rLoc = 11680;
-		rType = 0;
-		vrLen = 1716;
-		vrLoc = 11138;
 	};
 	E16C83D103F83AD700050002 = {
 		fRef = E16C83EF03F83AD700050002;
@@ -581,16 +561,6 @@
 		vrLen = 1412;
 		vrLoc = 0;
 	};
-	E16C83DF03F83AD700050002 = {
-		fRef = C6859E970290921104C91782;
-		isa = PBXTextBookmark;
-		name = "appswitch.1: 110";
-		rLen = 0;
-		rLoc = 4118;
-		rType = 0;
-		vrLen = 1732;
-		vrLoc = 2592;
-	};
 	E16C83E103F83AD700050002 = {
 		fRef = E1A0BD3203EFAD9E00050001;
 		isa = PBXTextBookmark;
@@ -626,7 +596,7 @@
 		isa = PBXTextBookmark;
 		name = "main.c: main";
 		rLen = 0;
-		rLoc = 16052;
+		rLoc = 16257;
 		rType = 0;
 		vrLen = 1650;
 		vrLoc = 10700;
@@ -646,7 +616,7 @@
 		isa = PBXTextBookmark;
 		name = "main.c: matchApplication";
 		rLen = 0;
-		rLoc = 12708;
+		rLoc = 12913;
 		rType = 0;
 		vrLen = 1426;
 		vrLoc = 8916;
@@ -656,7 +626,7 @@
 		isa = PBXTextBookmark;
 		name = "main.c: 51";
 		rLen = 0;
-		rLoc = 2379;
+		rLoc = 2377;
 		rType = 0;
 		vrLen = 801;
 		vrLoc = 1590;
@@ -686,7 +656,7 @@
 		isa = PBXTextBookmark;
 		name = "main.c: 117";
 		rLen = 0;
-		rLoc = 5052;
+		rLoc = 5050;
 		rType = 0;
 		vrLen = 1813;
 		vrLoc = 0;
@@ -803,22 +773,6 @@
 		vrLen = 2097;
 		vrLoc = 10692;
 	};
-	E16C842C03FB74A500050002 = {
-		fRef = E16C842E03FB74A500050002;
-		isa = PBXTextBookmark;
-		name = "CFString.h: 252";
-		rLen = 142;
-		rLoc = 12196;
-		rType = 0;
-		vrLen = 2097;
-		vrLoc = 10692;
-	};
-	E16C842E03FB74A500050002 = {
-		isa = PBXFileReference;
-		name = CFString.h;
-		path = /System/Library/Frameworks/CoreFoundation.framework/Versions/A/Headers/CFString.h;
-		refType = 0;
-	};
 	E16C842F03FB74A500050002 = {
 		isa = PBXFileReference;
 		name = CFString.h;
@@ -844,5 +798,55 @@
 		);
 		sourceDirectories = (
 		);
+	};
+	E1B46F500404978A00050002 = {
+		fRef = 08FB7796FE84155DC02AAC07;
+		isa = PBXTextBookmark;
+		name = "main.c: VERSION";
+		rLen = 0;
+		rLoc = 1695;
+		rType = 0;
+		vrLen = 1811;
+		vrLoc = 0;
+	};
+	E1B46F510404978A00050002 = {
+		fRef = C6859E970290921104C91782;
+		isa = PBXTextBookmark;
+		name = "appswitch.1: 123";
+		rLen = 0;
+		rLoc = 4118;
+		rType = 0;
+		vrLen = 1451;
+		vrLoc = 2587;
+	};
+	E1B46F520404978A00050002 = {
+		fRef = 08FB7796FE84155DC02AAC07;
+		isa = PBXTextBookmark;
+		name = "main.c: VERSION";
+		rLen = 0;
+		rLoc = 1695;
+		rType = 0;
+		vrLen = 1811;
+		vrLoc = 0;
+	};
+	E1B46F530404978A00050002 = {
+		fRef = C6859E970290921104C91782;
+		isa = PBXTextBookmark;
+		name = "appswitch.1: 123";
+		rLen = 0;
+		rLoc = 4118;
+		rType = 0;
+		vrLen = 1451;
+		vrLoc = 2587;
+	};
+	E1B46F540404978A00050002 = {
+		fRef = E16C83CC03F7AF7B00050002;
+		isa = PBXTextBookmark;
+		name = "README: 88";
+		rLen = 0;
+		rLoc = 3017;
+		rType = 0;
+		vrLen = 1583;
+		vrLoc = 1611;
 	};
 }

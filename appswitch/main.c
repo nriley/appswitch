@@ -65,7 +65,7 @@ static errList ERRS = {
 };
 
 void usage() {
-    fprintf(stderr, "usage: %s [-sShHkFlP] [-c creator] [-i bundleID] [-a name] [-p pid] [path]\n"
+    fprintf(stderr, "usage: %s [-sShHqkFlLP] [-c creator] [-i bundleID] [-a name] [-p pid] [path]\n"
             "  -s            show application, bring windows to front (do not switch)\n"
             "  -S            show all applications\n"
             "  -h            hide application\n"
