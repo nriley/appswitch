@@ -1,5 +1,5 @@
-appswitch 1.0 [19 February 2003]
-=============
+appswitch 1.0.1 [19 April 2004]
+===============
 
 A command-line interface to the Mac OS X process manager.
 
@@ -36,14 +36,14 @@ else, modify the install line as appropriate.
 
 Uninstallation:
 
-% sudo rm -f /usr/local/bin/appswitch
+% sudo rm -f /usr/local/bin/appswitch /usr/local/man/man1/appswitch.1
 
 COMPILATION
 -----------
 
 A Project Builder project, 'appswitch.pbproj', is included.  A
 precompiled binary is also provided.  'appswitch' was developed and
-tested under Mac OS 10.2.4 with the December 2002 Developer Tools,
+tested under Mac OS 10.3.3 with the April 2004 Developer Tools,
 and does not require any additional software to build.
 
 USAGE
@@ -72,6 +72,8 @@ Please send to the author, Nicholas Riley, at <appswitch@sabi.net>.
 VERSION HISTORY
 ---------------
 
+1.0.1 - 19 April 2004
+- fixed crash matching applications with no bundle identifier
 1.0   - 19 February 2003
  - added description of -q delay bug (no workaround)
 1.0b3 - 13 February 2003

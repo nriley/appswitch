@@ -3,14 +3,19 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 38;
+	objectVersion = 39;
 	objects = {
 		014CEA490018CE3211CA2923 = {
 			buildRules = (
 			);
 			buildSettings = {
 				COPY_PHASE_STRIP = NO;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_FIX_AND_CONTINUE = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
 				OPTIMIZATION_CFLAGS = "-O0";
+				ZERO_LINK = YES;
 			};
 			isa = PBXBuildStyle;
 			name = Development;
@@ -20,6 +25,8 @@
 			);
 			buildSettings = {
 				COPY_PHASE_STRIP = YES;
+				GCC_ENABLE_FIX_AND_CONTINUE = NO;
+				ZERO_LINK = NO;
 			};
 			isa = PBXBuildStyle;
 			name = Deployment;
@@ -35,9 +42,12 @@
 //033
 //034
 		034768E2FF38A6DC11DB9C8B = {
+			explicitFileType = "compiled.mach-o.executable";
+			fallbackIsa = PBXFileReference;
 			isa = PBXExecutableFileReference;
 			path = appswitch;
 			refType = 3;
+			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 //030
 //031
@@ -50,6 +60,8 @@
 //083
 //084
 		08FB7793FE84155DC02AAC07 = {
+			buildSettings = {
+			};
 			buildStyles = (
 				014CEA490018CE3211CA2923,
 				014CEA4A0018CE3211CA2923,
@@ -72,6 +84,7 @@
 			isa = PBXGroup;
 			name = appswitch;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		08FB7795FE84155DC02AAC07 = {
 			children = (
@@ -81,12 +94,18 @@
 			isa = PBXGroup;
 			name = Source;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		08FB7796FE84155DC02AAC07 = {
 			fileEncoding = 4;
+			indentWidth = 4;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.c;
 			path = main.c;
 			refType = 4;
+			sourceTree = "<group>";
+			tabWidth = 8;
+			usesTabs = 0;
 		};
 		08FB779DFE84155DC02AAC07 = {
 			children = (
@@ -95,6 +114,7 @@
 			isa = PBXGroup;
 			name = "External Frameworks and Libraries";
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		08FB779FFE84155DC02AAC07 = {
 			buildPhases = (
@@ -181,6 +201,7 @@
 			isa = PBXGroup;
 			name = Products;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 //190
 //191
@@ -200,11 +221,14 @@
 			isa = PBXGroup;
 			name = Documentation;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		C6859E970290921104C91782 = {
 			isa = PBXFileReference;
+			lastKnownFileType = text.man;
 			path = appswitch.1;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		C6859E980290922304C91782 = {
 			buildActionMask = 8;
@@ -236,8 +260,10 @@
 		E16C83CC03F7AF7B00050002 = {
 			fileEncoding = 4;
 			isa = PBXFileReference;
+			lastKnownFileType = text;
 			path = README;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		E16C83CD03F7AF7B00050002 = {
 			fileRef = E16C83CC03F7AF7B00050002;
@@ -248,8 +274,10 @@
 		E1A0BD3203EFAD9E00050001 = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = CPS.h;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		E1A0BD3303EFAD9E00050001 = {
 			fileRef = E1A0BD3203EFAD9E00050001;
@@ -258,10 +286,13 @@
 			};
 		};
 		E1A0BD4C03EFB64400050001 = {
+			fallbackIsa = PBXFileReference;
 			isa = PBXFrameworkReference;
+			lastKnownFileType = wrapper.framework;
 			name = ApplicationServices.framework;
 			path = /System/Library/Frameworks/ApplicationServices.framework;
 			refType = 0;
+			sourceTree = "<absolute>";
 		};
 		E1A0BD4D03EFB64400050001 = {
 			fileRef = E1A0BD4C03EFB64400050001;

@@ -2,7 +2,7 @@
  appswitch - a command-line application switcher
  Nicholas Riley <appswitch@sabi.net>
 
- Copyright (c) 2003, Nicholas Riley
+ Copyright (c) 2003-04, Nicholas Riley
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
@@ -249,9 +249,15 @@ Boolean bundleIdentifierForApplication(CFStringRef *bundleID, char *path) {
     CFBundleRef bundle = CFBundleCreate(NULL, url);
     if (bundle != NULL) {
         *bundleID = CFBundleGetIdentifier(bundle);
+        if (*bundleID != NULL) {
+            CFRetain(*bundleID);
 #if DEBUG
-        CFShow(*bundleID);
+            CFShow(*bundleID);
 #endif
+        }
+        CFRelease(bundle);
+    } else {
+        *bundleID = NULL;
     }
     CFRelease(url);
     return true;
@@ -345,8 +351,12 @@ CPSProcessSerNum matchApplication(CPSProcessInfoRec *info) {
                    CFStringRef bundleID;
                    if (!bundleIdentifierForApplication(&bundleID, path))
                        errexit("can't get bundle location for process '%s' (PSN %ld.%ld, pid %ld)", name, psn.hi, psn.lo, info->UnixPID);
-                   if (bundleID != NULL && CFStringCompare(OPTS.bundleID, bundleID, kCFCompareCaseInsensitive) == kCFCompareEqualTo)
-                       break;
+                   if (bundleID != NULL) {
+                       CFComparisonResult result = CFStringCompare(OPTS.bundleID, bundleID, kCFCompareCaseInsensitive);
+                       if (result == kCFCompareEqualTo)
+                           break;
+		       CFRelease(bundleID);
+                   }
                    continue;
                }
             default:
