@@ -23,7 +23,7 @@
 
 const char *APP_NAME;
 
-#define VERSION "1.0b1"
+#define VERSION "1.0b2"
 
 struct {
     OSType creator;
@@ -297,9 +297,10 @@ CPSProcessSerNum matchApplication(CPSProcessInfoRec *info) {
         }
         if (OPTS.appAction == APP_LIST) {
             char *type = (char *)&(info->ExecFileType), *crea = (char *)&(info->ExecFileCreator);
+#define CXX(c) ( (c) < ' ' ? '?' : (c) )
+#define OSTYPE_CHAR_ARGS(t) CXX(t[0]), CXX(t[1]), CXX(t[2]), CXX(t[3])
             printf(format, psn.hi, psn.lo, info->UnixPID,
-                   type[0], type[1], type[2], type[3],
-                   crea[0], crea[1], crea[2], crea[3],
+		   OSTYPE_CHAR_ARGS(type), OSTYPE_CHAR_ARGS(crea),
                    name, path);
             continue;
         }
