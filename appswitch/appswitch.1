@@ -1,12 +1,12 @@
-.Dd Mon Feb 11 2003               \" DATE 
-.Dt APPSWITCH 1 LOCAL      \" Program name and manual section number 
-.Os appswitch 1.0b2
+.Dd Wed Feb 19 2003      \" DATE 
+.Dt APPSWITCH 1 LOCAL    \" Program name and manual section number 
+.Os appswitch 1.0
 .Sh NAME
 .Nm appswitch
 .Nd switch, hide, show, kill or list Mac OS X applications
 .Sh SYNOPSIS
 .Nm appswitch
-.Op Fl sShHkFlP          \" [-sShHkFlP]
+.Op Fl sShHqkKFlLP       \" [-sShHqkKFlLP]
 .Op Fl c Ar creator      \" [-c creator]
 .Op Fl i Ar bundleID     \" [-i bundleID]
 .Op Fl a Ar name         \" [-a name]
@@ -33,7 +33,7 @@ Bundle identifiers are not case-sensitive.
 If you're extremely concerned about the speed of matching, any other
 match method is faster than a match by bundle identifier.
 .It Fl p Ar pid
-Match by process identifier, a positive number.
+Match by process identifier, a positive integer.
 .It Ar path
 Match by bundle path.  For packaged applications, this is the package
 directory whose name typically has the .app extension, for example
@@ -49,22 +49,37 @@ application is acted upon.  The list option
 displays all matching applications.
 .Bl -tag -width -indent
 .It Fl s
-Show the application, making the application's windows frontmost. Do
+Show the application, making the application's windows frontmost.  Do
 not switch to the application.
 .It Fl h
 Hide the application's windows.
+.It Fl q
+Quit the application.
 .It Fl k
-Kill (force quit) the application.
+Kill (force quit) the application.  Sends the
+.Dv SIGINT
+signal to the application, which the application may
+ignore.  Equivalent to selecting 
+.Dq Force Quit
+from an application's menu in the Dock for the first time.
+.It Fl K
+Kill (force quit) the application.  Sends the
+.Dv SIGKILL
+signal to the application, which the application may not ignore.
+Equivalent to selecting
+.Dq Force Quit
+from an application's menu in the Dock for the second time.
 .It Fl l
 List applications in a format similar to that of
-.Xr ps 1 . The columns of the listing are as follows:
+.Xr ps 1 .
+The columns of the listing are as follows:
 .Bl -tag -width indent
 .It PSN
 The process serial number of the application.  Process serial numbers
 are unique identifiers among both native Mac OS X and Classic
 applications.
 .It PID
-The process identifier, a positive number which uniquely identifies
+The process identifier, a positive integer which uniquely identifies
 native Mac OS X processes, usable with the
 .Fl p
 matching option.  Because all Classic applications run inside
@@ -102,8 +117,16 @@ The path to the application bundle, usable with the
 matching option. This field is truncated to the window width, or to 80
 characters if the window width cannot be determined.
 .El
+.It Fl L
+List applications in a format similar to that of
+.Xr ps 1 .
+The columns of the listing are as above, but the path field is not
+truncated to the window width, and a bundle identifier is added in
+parentheses after the path, usable with the
+.Fl i
+matching option.
 .It Fl P
-Print the application's process identifier (PID), a positive number
+Print the application's process identifier (PID), a positive integer
 and unique identifier for all applications except Classic
 applications.
 .El
@@ -134,7 +157,14 @@ option may be unreliable if issued immediately after another show or
 hide command; try inserting a
 .Xr sleep 1
 command before it.
-.Sh AUTHORS
+.Pp
+The
+.Fl q
+option is very slow on Mac OS X 10.2.4 and earlier; this is an
+acknowledged bug in AECreateAppleEvent with no known workaround. Chris
+Espinosa from Apple has stated that they plan to fix it in a future
+release.
+.Sh AUTHOR
 .An "Nicholas Riley" Aq appswitch@sabi.net
 .\" .Sh HISTORY           \" Document history if command behaves in a unique manner 
 

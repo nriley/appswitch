@@ -1,5 +1,5 @@
-appswitch 1.0b2 [11 February 2003]
-===============
+appswitch 1.0 [19 February 2003]
+=============
 
 A command-line interface to the Mac OS X process manager.
 
@@ -72,6 +72,13 @@ Please send to the author, Nicholas Riley, at <appswitch@sabi.net>.
 VERSION HISTORY
 ---------------
 
+1.0   - 19 February 2003
+ - added description of -q delay bug (no workaround)
+1.0b3 - 13 February 2003
+ - display spaces instead of ? characters when unprintable
+ - properly handle very narrow window width with -l
+ - further revised and clarified man page
+ - added -q, -K, -L options
 1.0b2 - 11 February 2003
  - display ? characters for unprintable creator code characters
    (e.g. java)
