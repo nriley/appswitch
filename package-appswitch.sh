@@ -15,7 +15,7 @@ DMG="appswitch-$VERSION.dmg" VOL="appswitch $VERSION" MOUNTPOINT="/Volumes/$VOL"
 cd .. && \
 rm -f appswitch-$VERSION $TARBALL $DMG && \
 ln -s appswitch appswitch-$VERSION && \
-tar --exclude=.DS_Store -zchf appswitch-$VERSION.tar.gz appswitch-$VERSION && \
+tar --exclude=.DS_Store --exclude=.svn -zchf appswitch-$VERSION.tar.gz appswitch-$VERSION && \
 #hdiutil create $DMG -megabytes 5 -ov -type UDIF && \
 #DISK=`hdid $DMG | sed -ne ' /Apple_partition_scheme/ s|^/dev/\([^ ]*\).*$|\1|p'` && \
 #newfs_hfs -v "$VOL" /dev/r${DISK}s2 && \
@@ -30,5 +30,5 @@ tar --exclude=.DS_Store -zchf appswitch-$VERSION.tar.gz appswitch-$VERSION && \
 #osascript -e "tell application \"Finder\" to eject disk \"$VOL\"" && \
 #hdiutil convert $DMG -format UDZO -o z$DMG && \
 #mv z$DMG $DMG && \
-# scp $TARBALL ainaz:web/nriley/software/ #$DMG 
+scp $TARBALL ainaz:web/nriley/software/ #$DMG 
 :
