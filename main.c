@@ -18,11 +18,12 @@
 #define DEBUG 0
 
 #include <unistd.h>
+#include <sys/ioctl.h>
 #include "CPS.h"
 
 const char *APP_NAME;
 
-#define VERSION "1.0d1"
+#define VERSION "1.0b1"
 
 struct {
     OSType creator;
@@ -31,11 +32,20 @@ struct {
     pid_t pid;
     char *path;
     enum {
-        MATCH_UNKNOWN, MATCH_CREATOR, MATCH_BUNDLE_ID, MATCH_NAME, MATCH_PID, MATCH_PATH
+        MATCH_UNKNOWN, MATCH_FRONT, MATCH_CREATOR, MATCH_BUNDLE_ID, MATCH_NAME, MATCH_PID, MATCH_PATH, MATCH_ALL
     } matchType;
+    enum {
+        APP_NONE, APP_SWITCH, APP_SHOW, APP_HIDE, APP_KILL, APP_LIST, APP_PRINT_PID
+    } appAction;
+    enum {
+        ACTION_NONE, ACTION_SHOW_ALL, ACTION_HIDE_OTHERS
+    } action;
+    enum {
+        FINAL_NONE, FINAL_SWITCH
+    } finalAction;
 } OPTS =
 {
-    kLSUnknownCreator, NULL, NULL, -1, NULL, MATCH_UNKNOWN
+    kLSUnknownCreator, NULL, NULL, -1, NULL, MATCH_UNKNOWN, APP_NONE, ACTION_NONE, FINAL_NONE
 };
 
 typedef struct {
@@ -54,11 +64,20 @@ static errList ERRS = {
 };
 
 void usage() {
-    fprintf(stderr, "usage: %s [-c creator] [-i bundleID] [-a name] [-p pid] [path]\n"
+    fprintf(stderr, "usage: %s [-sShHkFlP] [-c creator] [-i bundleID] [-a name] [-p pid] [path]\n"
+            "  -s            show application, bring windows to front (do not switch)\n"
+            "  -S            show all applications\n"
+            "  -h            hide application\n"
+            "  -H            hide other applications\n"
+            "  -k            kill application\n"
+            "  -l            list applications\n"
+            "  -P            print application process ID\n"
+            "  -F            bring current application's windows to front\n"
             "  -c creator    match application by four-character creator code ('ToyS')\n"
             "  -i bundle ID  match application by bundle identifier (com.apple.scripteditor)\n"
             "  -p pid        match application by process identifier [slower]\n"
-            "  -a name       match application by name\n", APP_NAME);
+            "  -a name       match application by name\n"
+            , APP_NAME);
     fprintf(stderr, "appswitch "VERSION" (c) 2003 Nicholas Riley <http://web.sabi.net/nriley/software/>.\n"
             "Please send bugs, suggestions, etc. to <appswitch@sabi.net>.\n");
 
@@ -112,36 +131,67 @@ void getargs(int argc, char * const argv[]) {
 
     if (argc == 1) usage();
 
-    const char *opts = "c:i:p:a:";
-    
-    ch = getopt(argc, argv, opts);
+    const char *opts = "c:i:p:a:sShHklPF";
 
-    switch (ch) {
-        case 'p':
-            if (sscanf(optarg, "%d", &OPTS.pid) != 1 || OPTS.pid < 0)
-                errexit("invalid process identifier (argument of -p)");
-            OPTS.matchType = MATCH_PID;
-            break;
-        case 'c':
-            if (strlen(optarg) != 4) errexit("creator (argument of -c) must be four characters long");
-            OPTS.creator = *(OSTypePtr)optarg;
-            OPTS.matchType = MATCH_CREATOR;
-            break;
-        case 'i':
-            OPTS.bundleID = CFStringCreateWithCString(NULL, optarg, CFStringGetSystemEncoding());
-            OPTS.matchType = MATCH_BUNDLE_ID;
-            break;
-        case 'a':
-            OPTS.name = strdup(optarg);
-            OPTS.matchType = MATCH_NAME;
-            break;
-        case -1:
-            break;
-        default: usage();
+    while ( (ch = getopt(argc, argv, opts)) != -1) {
+        switch (ch) {
+            case 'p':
+                if (OPTS.matchType != MATCH_UNKNOWN) errexit("choose only one of -c, -i, -p, -a options");
+                if (sscanf(optarg, "%d", &OPTS.pid) != 1 || OPTS.pid < 0)
+                    errexit("invalid process identifier (argument of -p)");
+                OPTS.matchType = MATCH_PID;
+                break;
+            case 'c':
+                if (OPTS.matchType != MATCH_UNKNOWN) errexit("choose only one of -c, -i, -p, -a options");
+                if (strlen(optarg) != 4) errexit("creator (argument of -c) must be four characters long");
+                OPTS.creator = *(OSTypePtr)optarg;
+                OPTS.matchType = MATCH_CREATOR;
+                break;
+            case 'i':
+                if (OPTS.matchType != MATCH_UNKNOWN) errexit("choose only one of -c, -i, -p, -a options");
+                OPTS.bundleID = CFStringCreateWithCString(NULL, optarg, CFStringGetSystemEncoding());
+                OPTS.matchType = MATCH_BUNDLE_ID;
+                break;
+            case 'a':
+                if (OPTS.matchType != MATCH_UNKNOWN) errexit("choose only one of -c, -i, -p, -a options");
+                OPTS.name = strdup(optarg);
+                OPTS.matchType = MATCH_NAME;
+                break;
+            case 's':
+                if (OPTS.appAction != APP_NONE) errexit("choose only one of -s, -h, -k, -l, -P options");
+                OPTS.appAction = APP_SHOW;
+                break;
+            case 'h':
+                if (OPTS.appAction != APP_NONE) errexit("choose only one of -s, -h, -k, -l, -P options");
+                OPTS.appAction = APP_HIDE;
+                break;
+            case 'k':
+                if (OPTS.appAction != APP_NONE) errexit("choose only one of -s, -h, -k, -l, -P options");
+                OPTS.appAction = APP_KILL;
+                break;
+            case 'l':
+                if (OPTS.appAction != APP_NONE) errexit("choose only one of -s, -h, -k, -l, -P options");
+                OPTS.appAction = APP_LIST;
+                break;
+            case 'P':
+                if (OPTS.appAction != APP_NONE) errexit("choose only one of -s, -h, -k, -l, -P options");
+                OPTS.appAction = APP_PRINT_PID;
+                break;
+            case 'S':
+                if (OPTS.action != ACTION_NONE) errexit("choose -S, -H or neither option");
+                OPTS.action = ACTION_SHOW_ALL;
+                break;
+            case 'H':
+                if (OPTS.action != ACTION_NONE) errexit("choose -S, -H or neither option");
+                OPTS.action = ACTION_HIDE_OTHERS;
+                break;
+            case 'F':
+                if (OPTS.finalAction != FINAL_NONE) errexit("choose only one -F option");
+                OPTS.finalAction = FINAL_SWITCH;
+                break;
+            default: usage();
+        }
     }
-
-    if (getopt(argc, argv, opts) != -1)
-        errexit("choose only one of -c, -i, -u, -p, -a options");
 
     argc -= optind;
     argv += optind;
@@ -149,18 +199,34 @@ void getargs(int argc, char * const argv[]) {
     if (OPTS.matchType != MATCH_UNKNOWN && argc != 0) usage();
 
     if (OPTS.matchType == MATCH_UNKNOWN) {
-        if (argc != 1) usage();
-        OPTS.path = argv[0];
-        OPTS.matchType = MATCH_PATH;
+        if (argc == 0) {
+            if (OPTS.appAction == APP_LIST) {
+                OPTS.matchType = MATCH_ALL;
+            } else if (OPTS.action != ACTION_NONE || OPTS.finalAction != FINAL_NONE) {
+                OPTS.matchType = MATCH_FRONT;
+            } else usage();
+        } else if (argc == 1) {
+            OPTS.path = argv[0];
+            OPTS.matchType = MATCH_PATH;
+        } else usage();
     }
+
+    if (OPTS.matchType != MATCH_FRONT && OPTS.appAction == APP_NONE)
+        OPTS.appAction = APP_SWITCH;
+
 }
 
-int main (int argc, char * const argv[]) {
-    OSStatus err;
+CPSProcessSerNum frontApplication() {
+    CPSProcessSerNum psn;
+    OSStatus err = CPSGetFrontProcess(&psn);
+    if (err != noErr) osstatusexit(err, "can't get frontmost process");
+#if DEBUG
+    fprintf(stderr, "front application PSN %ld.%ld\n", psn.hi, psn.lo);
+#endif
+    return psn;
+}
 
-    APP_NAME = argv[0];
-    getargs(argc, argv);
-    
+CPSProcessSerNum matchApplication(CPSProcessInfoRec *info) {
     long pathMaxLength = pathconf("/", _PC_PATH_MAX);
     long nameMaxLength = pathconf("/", _PC_NAME_MAX);
 
@@ -169,58 +235,137 @@ int main (int argc, char * const argv[]) {
 
     if (path == NULL || name == NULL) errexit("can't allocate memory for path or filename buffer");
 
-    // need to establish connection with window server
-    InitCursor();
-    
+    if (OPTS.matchType == MATCH_FRONT) return frontApplication();
+
+    OSStatus err;
     CPSProcessSerNum psn = {
         kNoProcess, kNoProcess
     };
-    CPSProcessInfoRec info;
     int len;
+    char *format = NULL;
+    if (OPTS.appAction == APP_LIST) {
+        int termwidth = 80;
+        struct winsize ws;
+        char *banner = "       PSN   PID TYPE CREA NAME                ";
+                     // 12345678.0 12345 1234 1234 12345678901234567890
+        printf("%s PATH\n", banner);
+        if ((ioctl(STDOUT_FILENO, TIOCGWINSZ, (char *)&ws) != -1 ||
+             ioctl(STDERR_FILENO, TIOCGWINSZ, (char *)&ws) != -1 ||
+             ioctl(STDIN_FILENO,  TIOCGWINSZ, (char *)&ws) != -1) ||
+            ws.ws_col != 0) termwidth = ws.ws_col;
+        int pathlen = termwidth - strlen(banner) - 1;
+        asprintf(&format, "%%8ld.%%ld %%5ld %%c%%c%%c%%c %%c%%c%%c%%c %%-20.20s %%-%d.%ds\n", pathlen, pathlen);
+    }
+    
     while ( (err = CPSGetNextProcess(&psn)) == noErr) {
-        err = CPSGetProcessInfo(&psn, &info, path, pathMaxLength, &len, name, nameMaxLength);
+        err = CPSGetProcessInfo(&psn, info, path, pathMaxLength, &len, name, nameMaxLength);
         if (err != noErr) osstatusexit(err, "can't get information for process PSN %ld.%ld", psn.hi, psn.lo);
 
 #if DEBUG
         fprintf(stderr, "%ld.%ld: %s : %s\n", psn.hi, psn.lo, name, path);
 #endif
-        
+
         switch (OPTS.matchType) {
-            case MATCH_UNKNOWN:
+            case MATCH_ALL:
                 break;
-            case MATCH_CREATOR: if (OPTS.creator != info.ExecFileCreator) continue;
+            case MATCH_CREATOR: if (OPTS.creator != info->ExecFileCreator) continue;
                 break;
             case MATCH_NAME: if (strcmp(name, OPTS.name) != 0) continue;
                 break;
-            case MATCH_PID: if (OPTS.pid != info.UnixPID) continue;
+            case MATCH_PID: if (OPTS.pid != info->UnixPID) continue;
                 break;
             case MATCH_PATH: if (strcmp(path, OPTS.path) != 0) continue;
                 break;
             case MATCH_BUNDLE_ID:
-            {
-                CFURLRef url = CFURLCreateFromFileSystemRepresentation(NULL, path, strlen(path), false);
-                if (url == NULL) errexit("can't get bundle location for process '%s' (PSN %ld.%ld, pid %d)", name, psn.hi, psn.lo, info.UnixPID);
-                CFBundleRef bundle = CFBundleCreate(NULL, url);
-                if (bundle != NULL) {
-                    CFStringRef bundleID = CFBundleGetIdentifier(bundle);
+               {
+                   CFURLRef url = CFURLCreateFromFileSystemRepresentation(NULL, path, strlen(path), false);
+                   if (url == NULL) errexit("can't get bundle location for process '%s' (PSN %ld.%ld, pid %ld)", name, psn.hi, psn.lo, info->UnixPID);
+                   CFBundleRef bundle = CFBundleCreate(NULL, url);
+                   if (bundle != NULL) {
+                       CFStringRef bundleID = CFBundleGetIdentifier(bundle);
 #if DEBUG
-                    CFShow(bundleID);
+                       CFShow(bundleID);
 #endif
-                    if (bundleID != NULL && CFStringCompare(OPTS.bundleID, bundleID, kCFCompareCaseInsensitive) == kCFCompareEqualTo)
-                        break;
-                }
-                CFRelease(url);
-                continue;
-            }
+                       if (bundleID != NULL && CFStringCompare(OPTS.bundleID, bundleID, kCFCompareCaseInsensitive) == kCFCompareEqualTo)
+                           break;
+                   }
+                   CFRelease(url);
+                   continue;
+               }
             default:
-                errexit("unknown match type");
+                errexit("internal error: invalid match type");
         }
-        err = CPSSetFrontProcess(&psn);
-        if (err != noErr) osstatusexit(err, "can't set front process");
-        exit(0);
+        if (OPTS.appAction == APP_LIST) {
+            char *type = (char *)&(info->ExecFileType), *crea = (char *)&(info->ExecFileCreator);
+            printf(format, psn.hi, psn.lo, info->UnixPID,
+                   type[0], type[1], type[2], type[3],
+                   crea[0], crea[1], crea[2], crea[3],
+                   name, path);
+            continue;
+        }
+        return psn;
     }
     if (err != procNotFound) osstatusexit(err, "can't get next process");
 
+    if (OPTS.appAction == APP_LIST) return frontApplication();
+
     errexit("can't find matching process");
-    return 0;
+    return psn;
+}
+
+int main (int argc, char * const argv[]) {
+    OSStatus err = noErr;
+
+    APP_NAME = argv[0];
+    getargs(argc, argv);
+
+    // need to establish connection with window server
+    InitCursor();
+
+    CPSProcessInfoRec info;
+    CPSProcessSerNum psn = matchApplication(&info);
+
+    const char *verb;
+    switch (OPTS.appAction) {
+        case APP_NONE: break;
+        case APP_LIST: break; // already handled in matchApplication
+        case APP_SWITCH: err = CPSSetFrontProcess(&psn); verb = "set front"; break;
+        case APP_SHOW: err = CPSPostShowReq(&psn); verb = "show"; break;
+        case APP_HIDE: err = CPSPostHideReq(&psn); verb = "hide"; break;
+        case APP_KILL: err = CPSPostKillRequest(&psn, kNilOptions); verb = "kill"; break;
+        case APP_PRINT_PID:
+            if (info.UnixPID <= 0) errexit("can't get process ID");
+            printf("%lu\n", info.UnixPID); // pid_t is signed, but this field isn't
+            break;
+        default:
+            errexit("internal error: invalid application action");
+    }
+    if (err != noErr) osstatusexit(err, "can't %s process", verb);
+
+    switch (OPTS.action) {
+        case ACTION_NONE: break;
+        case ACTION_SHOW_ALL: err = CPSPostShowAllReq(&psn); verb = "show all"; break;
+        case ACTION_HIDE_OTHERS: err = CPSPostHideMostReq(&psn); verb = "hide other"; break;
+        default:
+            errexit("internal error: invalid action");
+    }
+    if (err != noErr) osstatusexit(err, "can't %s processes", verb);
+
+    switch (OPTS.finalAction) {
+        case FINAL_NONE: break;
+        case FINAL_SWITCH:
+            psn = frontApplication();
+#if DEBUG
+            fprintf(stderr, "posting show request for %ld.%ld\n", psn.hi, psn.lo);
+#endif
+            if (OPTS.action != ACTION_NONE) usleep(750000); // XXX
+            err = CPSPostShowReq(&psn) || CPSSetFrontProcess(&psn);
+            verb = "bring current application's windows to the front";
+            break;
+        default:
+            errexit("internal error: invalid final action");    
+    }
+    if (err != noErr) osstatusexit(err, "can't %s", verb);
+
+    exit(0);
 }

@@ -195,6 +195,7 @@
 		C6859E96029091FE04C91782 = {
 			children = (
 				C6859E970290921104C91782,
+				E16C83CC03F7AF7B00050002,
 			);
 			isa = PBXGroup;
 			name = Documentation;
@@ -211,6 +212,7 @@
 			dstSubfolderSpec = 0;
 			files = (
 				C6859E990290922B04C91782,
+				E16C83CD03F7AF7B00050002,
 			);
 			isa = PBXCopyFilesBuildPhase;
 			runOnlyForDeploymentPostprocessing = 1;
@@ -231,6 +233,18 @@
 //E12
 //E13
 //E14
+		E16C83CC03F7AF7B00050002 = {
+			fileEncoding = 4;
+			isa = PBXFileReference;
+			path = README;
+			refType = 4;
+		};
+		E16C83CD03F7AF7B00050002 = {
+			fileRef = E16C83CC03F7AF7B00050002;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
 		E1A0BD3203EFAD9E00050001 = {
 			fileEncoding = 30;
 			isa = PBXFileReference;

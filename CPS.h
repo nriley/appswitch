@@ -77,7 +77,7 @@ struct CPSProcessInfoRec
 	CPSProcAttributes	Attributes;
 	UInt32			ExecFileType;
 	UInt32			ExecFileCreator;
-	UInt32			UnixPID;
+	SInt32			UnixPID; // njr changed from UInt32
 };
 
 typedef struct CPSProcessInfoRec	CPSProcessInfoRec;

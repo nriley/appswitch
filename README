@@ -1,0 +1,81 @@
+appswitch 1.0b1 [10 February 2003]
+===============
+
+A command-line interface to the Mac OS X process manager.
+
+Written by Nicholas Riley <mailto:appswitch@sabi.net>.
+Obtain updates from <http://web.sabi.net/nriley/software/>.
+
+WHAT IS IT?
+-----------
+
+If you use shell scripts to automate Mac OS X applications, you may
+need to switch between applications.  You could use AppleScript via
+osascript(1), but that would take several seconds for the script to
+compile and execute - or you could use appswitch, which works almost
+instantly.
+
+Say you're launching an X11 application from Terminal but the X server
+isn't in front when you need it.  Use appswitch to fix the problem.
+
+Or, if you'd like a version of the ps(1) utility which understands the
+concept of OS X applications, appswitch can help.
+
+INSTALLATION
+------------
+
+The commands below install the 'appswitch' tool in /usr/local/bin,
+which is in the default path.  You should subsequently be able to use
+'appswitch' by typing its name.  If you wish to install it somewhere
+else, modify the install line as appropriate.
+
+% sudo /usr/bin/install -d /usr/local/bin /usr/local/man/man1
+% sudo /usr/bin/install -c build/appswitch /usr/local/bin
+% sudo /usr/bin/install -c appswitch.1 /usr/local/man/man1
+% rehash
+
+Uninstallation:
+
+% sudo rm -f /usr/local/bin/appswitch
+
+COMPILATION
+-----------
+
+A Project Builder project, 'appswitch.pbproj', is included.  A
+precompiled binary is also provided.  'appswitch' was developed and
+tested under Mac OS 10.2.4 with the December 2002 Developer Tools,
+and does not require any additional software to build.
+
+USAGE
+-----
+
+Just type 'appswitch' by itself to receive usage information.  See the
+manual page (man appswitch) for more information.
+
+If you're curious about the speed difference between appswitch and
+other methods, this should give you some indication.
+
+appswitch -a Emacs          0.00s user 0.02s system  5% cpu 0.355 total
+appswitch -i com.gnu.Emacs  0.01s user 0.04s system 13% cpu 0.381 total
+open -a Emacs               0.30s user 0.15s system 53% cpu 0.842 total
+osascript -e 'tell application "Emacs" to activate'
+                            0.66s user 0.42s system 45% cpu 2.361 total
+
+The above tests were performed on a PowerBook G4/800; slower systems
+should show more dramatic differences.
+
+COMMENTS, SUGGESTIONS, BUG REPORTS, ETC.
+----------------------------------------
+
+Please send to the author, Nicholas Riley, at <appswitch@sabi.net>.
+
+VERSION HISTORY
+---------------
+
+1.0b1 - 10 February 2003
+ - added -S, -S, -h, -H, -k, -P, -l, -F options
+ - fixed reference to bogus -u option
+ - fixed bug where unknown match type was silently discarded
+ - added man page and this README
+1.0d1 - 4 February 2003
+ - initial release
