@@ -204,10 +204,10 @@
 						<key>_historyCapacity</key>
 						<integer>0</integer>
 						<key>bookmark</key>
-						<string>E1ED20AE0AF392EB00F9825D</string>
+						<string>E1A324600AF398B4003E2DC8</string>
 						<key>history</key>
 						<array>
-							<string>E1ED20980AF3924800F9825D</string>
+							<string>E1ED20AE0AF392EB00F9825D</string>
 						</array>
 					</dict>
 					<key>SplitCount</key>
@@ -244,10 +244,10 @@
 						<key>_historyCapacity</key>
 						<integer>0</integer>
 						<key>bookmark</key>
-						<string>E1ED20AF0AF392EB00F9825D</string>
+						<string>E1A324610AF398B4003E2DC8</string>
 						<key>history</key>
 						<array>
-							<string>E1ED1FFD0AF38A5800F9825D</string>
+							<string>E1ED20AF0AF392EB00F9825D</string>
 						</array>
 					</dict>
 					<key>SplitCount</key>
@@ -317,7 +317,7 @@
 									<array>
 										<real>16</real>
 										<real>22</real>
-										<real>224.83740234375</real>
+										<real>225</real>
 										<real>20</real>
 										<real>23</real>
 										<real>27</real>
@@ -343,8 +343,6 @@
 									<key>PBXSmartGroupTreeModuleOutlineStateSelectionKey</key>
 									<array>
 										<array>
-											<integer>6</integer>
-											<integer>4</integer>
 											<integer>0</integer>
 										</array>
 									</array>
@@ -367,7 +365,7 @@
 									<string>TargetStatusColumn</string>
 									<real>22</real>
 									<string>MainColumn</string>
-									<real>224.83740234375</real>
+									<real>225</real>
 									<string>FileBuiltColumn</string>
 									<real>20</real>
 									<string>ErrorsColumn</string>
@@ -515,8 +513,8 @@
 			</array>
 			<key>TableOfContents</key>
 			<array>
-				<string>E1ED1F7B0AF37C7900F9825D</string>
-				<string>E1ED1F7C0AF37C7900F9825D</string>
+				<string>E1A324590AF398A3003E2DC8</string>
+				<string>E1A3245A0AF398A3003E2DC8</string>
 				<string>1C9437FD063B20B00039CFAC</string>
 				<string>1C9437FE063B20B00039CFAC</string>
 				<string>1C9437FF063B20B00039CFAC</string>
@@ -549,7 +547,6 @@
 	<integer>0</integer>
 	<key>WindowOrderList</key>
 	<array>
-		<string>1C530D57069F1CE1000CFCEE</string>
 		<string>1C530D52069F1CE1000CFCEE</string>
 		<string>E1ED1FFB0AF38A5800F9825D</string>
 		<string>E1ED20AA0AF3929500F9825D</string>
@@ -714,7 +711,7 @@
 								<key>PBXProjectModuleGUID</key>
 								<string>1CD0528F0623707200166675</string>
 								<key>PBXProjectModuleLabel</key>
-								<string>main.c</string>
+								<string></string>
 								<key>StatusBarVisibility</key>
 								<true/>
 							</dict>
@@ -731,8 +728,6 @@
 							<string>604pt</string>
 						</dict>
 						<dict>
-							<key>BecomeActive</key>
-							<true/>
 							<key>ContentConfiguration</key>
 							<dict>
 								<key>PBXProjectModuleGUID</key>
@@ -772,7 +767,7 @@
 			<key>TableOfContents</key>
 			<array>
 				<string>1C530D52069F1CE1000CFCEE</string>
-				<string>E1ED1F8D0AF37CCB00F9825D</string>
+				<string>E1A324620AF398B4003E2DC8</string>
 				<string>1CD0528F0623707200166675</string>
 				<string>XCMainBuildResultsModuleGUID</string>
 			</array>

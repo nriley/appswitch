@@ -31,7 +31,7 @@
 /* Begin PBXFileReference section */
 		08FB7796FE84155DC02AAC07 /* main.c */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.c; path = main.c; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		C6859E970290921104C91782 /* appswitch.1 */ = {isa = PBXFileReference; lastKnownFileType = text.man; path = appswitch.1; sourceTree = "<group>"; };
-		E1607F080AF3700B001EAB72 /* appswitch */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = appswitch; sourceTree = BUILT_PRODUCTS_DIR; };
+		E1607F080AF3700B001EAB72 /* appswitch */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = "compiled.mach-o.executable"; path = appswitch; sourceTree = BUILT_PRODUCTS_DIR; };
 		E16C83CC03F7AF7B00050002 /* README */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = README; sourceTree = "<group>"; };
 		E1A0BD3203EFAD9E00050001 /* CPS.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = CPS.h; sourceTree = "<group>"; };
 		E1A0BD4C03EFB64400050001 /* ApplicationServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ApplicationServices.framework; path = /System/Library/Frameworks/ApplicationServices.framework; sourceTree = "<absolute>"; };
@@ -168,18 +168,30 @@
 		E1607EF00AF36FB6001EAB72 /* Development */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ARCHS = (
+					ppc,
+					i386,
+				);
 			};
 			name = Development;
 		};
 		E1607EF10AF36FB6001EAB72 /* Deployment */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ARCHS = (
+					ppc,
+					i386,
+				);
 			};
 			name = Deployment;
 		};
 		E1607EF20AF36FB6001EAB72 /* Default */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ARCHS = (
+					ppc,
+					i386,
+				);
 			};
 			name = Default;
 		};
