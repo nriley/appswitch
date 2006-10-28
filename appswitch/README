@@ -1,4 +1,4 @@
-appswitch 1.0.1 [16 May 2004]
+appswitch 1.1d1 [unreleased]
 ===============
 
 A command-line interface to the Mac OS X process manager.
@@ -32,7 +32,7 @@ else, modify the install line as appropriate.
 % sudo /usr/bin/install -d /usr/local/bin /usr/local/man/man1
 % sudo /usr/bin/install -c build/appswitch /usr/local/bin
 % sudo /usr/bin/install -c appswitch.1 /usr/local/man/man1
-% rehash
+% rehash				# if necessary
 
 Uninstallation:
 
@@ -41,10 +41,10 @@ Uninstallation:
 COMPILATION
 -----------
 
-An Xcode project, 'appswitch.xcode', is included.  A precompiled
-binary is also provided.  'appswitch' was developed and tested under
-Mac OS 10.3.3 with the April 2004 Developer Tools, and does not
-require any additional software to build.
+An Xcode project, 'appswitch.xcodeproj', is included.  A precompiled
+Universal binary is also provided.  'appswitch' was developed and
+tested under Mac OS 10.4.8 with Xcode 2.4, and does not require any
+additional software to build.
 
 USAGE
 -----
@@ -55,15 +55,14 @@ manual page (man appswitch) for more information.
 If you're curious about the speed difference between appswitch and
 other methods, this should give you some indication.
 
-appswitch -a Emacs          0.00s user 0.02s system 55% cpu 0.054 total
-appswitch -i com.gnu.Emacs  0.00s user 0.04s system 63% cpu 0.063 total
-open -a Emacs               0.32s user 0.12s system 50% cpu 0.876 total
-launch -a Emacs	            0.00s user 0.03s system 35% cpu 0.085 total
+appswitch -a Emacs          0.01s user 0.01s system 28% cpu 0.069 total
+launch -a Emacs	            0.01s user 0.01s system 35% cpu 0.076 total
+open -a Emacs               0.04s user 0.02s system 52% cpu 0.115 total
 osascript -e 'tell application "Emacs" to activate'
-                            0.41s user 0.23s system 67% cpu 0.949 total
+                            0.13s user 0.06s system 59% cpu 0.326 total
 
-The above tests were performed on a PowerBook G4/800; slower systems
-should show more dramatic differences.
+The above tests were performed on a Mac mini Core Duo 1.66 GHz; slower
+systems show more dramatic differences.
 
 COMMENTS, SUGGESTIONS, BUG REPORTS, ETC.
 ----------------------------------------
@@ -73,6 +72,12 @@ Please send to the author, Nicholas Riley, at <appswitch@sabi.net>.
 VERSION HISTORY
 ---------------
 
+1.1 - unreleased
+ - switched to Process Manager instead of CPS (slower but more
+   compatible)
+ - fixed description of -k option: SIGTERM, not SIGINT
+ - added -f option
+ - Universal Binary, compatible with Intel Macs
 1.0.1 - 16 May 2004
  - fixed crash matching applications with no bundle identifier
  - fixed process listing PSN column width

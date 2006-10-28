@@ -2,7 +2,7 @@
  appswitch - a command-line application switcher
  Nicholas Riley <appswitch@sabi.net>
 
- Copyright (c) 2003-04, Nicholas Riley
+ Copyright (c) 2003-06, Nicholas Riley
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
@@ -18,24 +18,26 @@
 #define DEBUG 0
 
 #include <unistd.h>
+#include <signal.h>
 #include <sys/ioctl.h>
+#include <ApplicationServices/ApplicationServices.h>
 #include "CPS.h"
 
 const char *APP_NAME;
 
-#define VERSION "1.0.1"
+#define VERSION "1.1d1"
 
 struct {
-    OSType creator;
+    CFStringRef creator;
     CFStringRef bundleID;
-    char *name;
+    CFStringRef name;
     pid_t pid;
-    char *path;
+    CFStringRef path;
     enum {
         MATCH_UNKNOWN, MATCH_FRONT, MATCH_CREATOR, MATCH_BUNDLE_ID, MATCH_NAME, MATCH_PID, MATCH_PATH, MATCH_ALL
     } matchType;
     enum {
-        APP_NONE, APP_SWITCH, APP_SHOW, APP_HIDE, APP_QUIT, APP_KILL, APP_KILL_HARD, APP_LIST, APP_PRINT_PID
+        APP_NONE, APP_SWITCH, APP_SHOW, APP_HIDE, APP_QUIT, APP_KILL, APP_KILL_HARD, APP_LIST, APP_PRINT_PID, APP_FRONTMOST
     } appAction;
     Boolean longList;
     enum {
@@ -56,33 +58,37 @@ typedef struct {
 
 static errList ERRS = {
     // Process Manager errors
-    { appIsDaemon, "application is background-only\n", },
-    { procNotFound, "unable to connect to system service.\nAre you logged in?" },
+    { appIsDaemon, "application is background-only", },
+    { procNotFound, "application not found" },
+    { connectionInvalid, "application is not background-only", },
     // CoreGraphics errors
     { kCGErrorIllegalArgument, "window server error.\nAre you logged in?" },
     { fnfErr, "file not found" },
+    // (abused) errors
+    { permErr, "no permission" },
     { 0, NULL }
 };
 
 void usage() {
-    fprintf(stderr, "usage: %s [-sShHqkFlLP] [-c creator] [-i bundleID] [-a name] [-p pid] [path]\n"
+    fprintf(stderr, "usage: %s [-sShHqklLPfF] [-c creator] [-i bundleID] [-a name] [-p pid] [path]\n"
             "  -s            show application, bring windows to front (do not switch)\n"
             "  -S            show all applications\n"
             "  -h            hide application\n"
             "  -H            hide other applications\n"
             "  -q            quit application\n"
-            "  -k            kill application (SIGINT)\n"
+            "  -k            kill application (SIGTERM)\n"
             "  -K            kill application hard (SIGKILL)\n"
             "  -l            list applications\n"
             "  -L            list applications including full paths and bundle identifiers\n"
             "  -P            print application process ID\n"
+            "  -f            bring application's frontmost window to front\n"
             "  -F            bring current application's windows to front\n"
             "  -c creator    match application by four-character creator code ('ToyS')\n"
-            "  -i bundle ID  match application by bundle identifier (com.apple.scripteditor)\n"
-            "  -p pid        match application by process identifier [slower]\n"
+            "  -i bundle ID  match application by bundle identifier (com.apple.ScriptEditor2)\n"
+            "  -p pid        match application by process identifier\n"
             "  -a name       match application by name\n"
             , APP_NAME);
-    fprintf(stderr, "appswitch "VERSION" (c) 2003-04 Nicholas Riley <http://web.sabi.net/nriley/software/>.\n"
+    fprintf(stderr, "appswitch "VERSION" (c) 2003-06 Nicholas Riley <http://web.sabi.net/nriley/software/>.\n"
             "Please send bugs, suggestions, etc. to <appswitch@sabi.net>.\n");
 
     exit(1);
@@ -100,7 +106,7 @@ char *osstatusstr(OSStatus err) {
             errDesc = rec->desc;
             break;
         }
-            len = strlen(errDesc) + 10 * sizeof(char);
+    len = strlen(errDesc) + 10 * sizeof(char);
     str = (char *)malloc(len);
     if (str != NULL)
         snprintf(str, len, "%s (%ld)", errDesc, err);
@@ -135,7 +141,7 @@ void getargs(int argc, char * const argv[]) {
 
     if (argc == 1) usage();
 
-    const char *opts = "c:i:p:a:sShHqkKlLPF";
+    const char *opts = "c:i:p:a:sShHqkKlLPfF";
 
     while ( (ch = getopt(argc, argv, opts)) != -1) {
         switch (ch) {
@@ -147,52 +153,59 @@ void getargs(int argc, char * const argv[]) {
                 break;
             case 'c':
                 if (OPTS.matchType != MATCH_UNKNOWN) errexit("choose only one of -c, -i, -p, -a options");
-                if (strlen(optarg) != 4) errexit("creator (argument of -c) must be four characters long");
-                OPTS.creator = *(OSTypePtr)optarg;
+                OPTS.creator = CFStringCreateWithFileSystemRepresentation(NULL, optarg);
+                if (OPTS.creator == NULL) errexit("invalid creator (wrong text encoding?)");
+                if (CFStringGetLength(OPTS.creator) != 4) errexit("creator (argument of -c) must be four characters long");
                 OPTS.matchType = MATCH_CREATOR;
                 break;
             case 'i':
                 if (OPTS.matchType != MATCH_UNKNOWN) errexit("choose only one of -c, -i, -p, -a options");
-                OPTS.bundleID = CFStringCreateWithCString(NULL, optarg, CFStringGetSystemEncoding());
+                OPTS.bundleID = CFStringCreateWithFileSystemRepresentation(NULL, optarg);
+                if (OPTS.bundleID == NULL) errexit("invalid bundle ID (wrong text encoding?)");
                 OPTS.matchType = MATCH_BUNDLE_ID;
                 break;
             case 'a':
                 if (OPTS.matchType != MATCH_UNKNOWN) errexit("choose only one of -c, -i, -p, -a options");
-                OPTS.name = strdup(optarg);
+                OPTS.name = CFStringCreateWithFileSystemRepresentation(NULL, optarg);
+                if (OPTS.name == NULL) errexit("invalid application name (wrong text encoding?)");
                 OPTS.matchType = MATCH_NAME;
                 break;
             case 's':
-                if (OPTS.appAction != APP_NONE) errexit("choose only one of -s, -h, -q, -k, -K, -l, -L, -P options");
+                if (OPTS.appAction != APP_NONE) errexit("choose only one of -s, -h, -q, -k, -K, -l, -L, -P, -f options");
                 OPTS.appAction = APP_SHOW;
                 break;
             case 'h':
-                if (OPTS.appAction != APP_NONE) errexit("choose only one of -s, -h, -q, -k, -K, -l, -L, -P options");
+                if (OPTS.appAction != APP_NONE) errexit("choose only one of -s, -h, -q, -k, -K, -l, -L, -P, -f options");
                 OPTS.appAction = APP_HIDE;
                 break;
             case 'q':
-                if (OPTS.appAction != APP_NONE) errexit("choose only one of -s, -h, -q, -k, -K, -l, -L, -P options");
+                if (OPTS.appAction != APP_NONE) errexit("choose only one of -s, -h, -q, -k, -K, -l, -L, -P, -f options");
                 OPTS.appAction = APP_QUIT;
                 break;
             case 'k':
-                if (OPTS.appAction != APP_NONE) errexit("choose only one of -s, -h, -q, -k, -K, -l, -L, -P options");
+                if (OPTS.appAction != APP_NONE) errexit("choose only one of -s, -h, -q, -k, -K, -l, -L, -P, -f options");
                 OPTS.appAction = APP_KILL;
                 break;
             case 'K':
-                if (OPTS.appAction != APP_NONE) errexit("choose only one of -s, -h, -q, -k, -K, -l, -L, -P options");
+                if (OPTS.appAction != APP_NONE) errexit("choose only one of -s, -h, -q, -k, -K, -l, -L, -P, -f options");
                 OPTS.appAction = APP_KILL_HARD;
                 break;
             case 'l':
-                if (OPTS.appAction != APP_NONE) errexit("choose only one of -s, -h, -q, -k, -K, -l, -L, -P options");
+                if (OPTS.appAction != APP_NONE) errexit("choose only one of -s, -h, -q, -k, -K, -l, -L, -P, -f options");
                 OPTS.appAction = APP_LIST;
                 break;
             case 'L':
-                if (OPTS.appAction != APP_NONE) errexit("choose only one of -s, -h, -q, -k, -K, -l, -L, -P options");
+                if (OPTS.appAction != APP_NONE) errexit("choose only one of -s, -h, -q, -k, -K, -l, -L, -P, -f options");
                 OPTS.appAction = APP_LIST;
                 OPTS.longList = true;
                 break;
             case 'P':
-                if (OPTS.appAction != APP_NONE) errexit("choose only one of -s, -h, -q, -k, -K, -l, -P options");
+                if (OPTS.appAction != APP_NONE) errexit("choose only one of -s, -h, -q, -k, -K, -l, -L, -P, -f options");
                 OPTS.appAction = APP_PRINT_PID;
+                break;
+            case 'f':
+                if (OPTS.appAction != APP_NONE) errexit("choose only one of -s, -h, -q, -k, -K, -l, -L, -P, -f options");
+                OPTS.appAction = APP_FRONTMOST;
                 break;
             case 'S':
                 if (OPTS.action != ACTION_NONE) errexit("choose -S, -H or neither option");
@@ -223,7 +236,8 @@ void getargs(int argc, char * const argv[]) {
                 OPTS.matchType = MATCH_FRONT;
             } else usage();
         } else if (argc == 1) {
-            OPTS.path = argv[0];
+            OPTS.path = CFStringCreateWithFileSystemRepresentation(NULL, argv[0]);
+            if (OPTS.path == NULL) errexit("invalid path (wrong text encoding?)");
             OPTS.matchType = MATCH_PATH;
         } else usage();
     }
@@ -233,37 +247,17 @@ void getargs(int argc, char * const argv[]) {
 
 }
 
-CPSProcessSerNum frontApplication() {
-    CPSProcessSerNum psn;
-    OSStatus err = CPSGetFrontProcess(&psn);
+ProcessSerialNumber frontApplication() {
+    ProcessSerialNumber psn;
+    OSStatus err = GetFrontProcess(&psn);
     if (err != noErr) osstatusexit(err, "can't get frontmost process");
 #if DEBUG
-    fprintf(stderr, "front application PSN %ld.%ld\n", psn.hi, psn.lo);
+    fprintf(stderr, "front application PSN %ld.%ld\n", psn.lowLongOfPSN, psn.highLongOfPSN);
 #endif
     return psn;
 }
 
-Boolean bundleIdentifierForApplication(CFStringRef *bundleID, char *path) {
-    CFURLRef url = CFURLCreateFromFileSystemRepresentation(NULL, path, strlen(path), false);
-    if (url == NULL) return false;
-    CFBundleRef bundle = CFBundleCreate(NULL, url);
-    if (bundle != NULL) {
-        *bundleID = CFBundleGetIdentifier(bundle);
-        if (*bundleID != NULL) {
-            CFRetain(*bundleID);
-#if DEBUG
-            CFShow(*bundleID);
-#endif
-        }
-        CFRelease(bundle);
-    } else {
-        *bundleID = NULL;
-    }
-    CFRelease(url);
-    return true;
-}
-
-OSStatus quitApplication(CPSProcessSerNum *psn) {
+OSStatus quitApplication(ProcessSerialNumber *psn) {
     AppleEvent event;
     AEAddressDesc appDesc;
     OSStatus err;
@@ -272,8 +266,6 @@ OSStatus quitApplication(CPSProcessSerNum *psn) {
     err = AECreateDesc(typeProcessSerialNumber, psn, sizeof(*psn), &appDesc);
     if (err != noErr) return err;
 
-    // XXX AECreateAppleEvent is very slow in Mac OS X 10.2.4 and earlier.
-    // XXX This is Apple's bug: <http://lists.apple.com/archives/applescript-implementors/2003/Feb/19/aecreateappleeventfromco.txt>
     err = AECreateAppleEvent(kCoreEventClass, kAEQuitApplication, &appDesc, kAutoGenerateReturnID, kAnyTransactionID, &event);
     if (err != noErr) return err;
 
@@ -287,22 +279,52 @@ OSStatus quitApplication(CPSProcessSerNum *psn) {
     return noErr;
 }
 
-CPSProcessSerNum matchApplication(CPSProcessInfoRec *info) {
-    long pathMaxLength = pathconf("/", _PC_PATH_MAX);
-    long nameMaxLength = pathconf("/", _PC_NAME_MAX);
+pid_t getPID(const ProcessSerialNumber *psn) {
+    pid_t pid;
+    OSStatus err = GetProcessPID(psn, &pid);
+    if (err != noErr) osstatusexit(err, "can't get process ID");
+    return pid;
+}
 
-    char *path = (char *)malloc(pathMaxLength);
-    char *name = (char *)malloc(nameMaxLength);;
+bool infoStringMatches(CFDictionaryRef info, CFStringRef key, CFStringRef matchStr) {
+    CFStringRef str = CFDictionaryGetValue(info, key);
+    if (str == NULL)
+        return false;
+    /* note: this means we might match names/paths that are wrong, but works better in the common case */
+    return CFStringCompare(str, matchStr, kCFCompareCaseInsensitive) == kCFCompareEqualTo;
+}
 
-    if (path == NULL || name == NULL) errexit("can't allocate memory for path or filename buffer");
+char *getInfoCString(CFDictionaryRef info, CFStringRef key) {
+    CFStringRef str = CFDictionaryGetValue(info, key);
+    if (str == NULL)
+        return "";
+    static char *cStr = NULL;
+    static bool wasDynamic = false;
+    if (wasDynamic)
+        free(cStr);
+    cStr = (char *)CFStringGetCStringPtr(str, CFStringGetSystemEncoding());
+    if (cStr != NULL) {
+        wasDynamic = false;
+    } else {
+        CFIndex cStrLength = CFStringGetMaximumSizeOfFileSystemRepresentation(str);
+        cStr = (char *)malloc(cStrLength * sizeof(char));
+        if (!CFStringGetFileSystemRepresentation(str, cStr, cStrLength)) {
+            CFShow(cStr);
+            errexit("internal error: string encoding conversion failed");
+        }
+        wasDynamic = true;
+    }
+    return cStr;
+}
 
+ProcessSerialNumber matchApplication(void) {
     if (OPTS.matchType == MATCH_FRONT) return frontApplication();
 
     OSStatus err;
-    CPSProcessSerNum psn = {
+    ProcessSerialNumber psn = {
         kNoProcess, kNoProcess
     };
-    int len;
+    pid_t pid;
     char *format = NULL;
     if (OPTS.appAction == APP_LIST) {
         int termwidth = 80;
@@ -313,7 +335,7 @@ CPSProcessSerNum matchApplication(CPSProcessInfoRec *info) {
              ioctl(STDERR_FILENO, TIOCGWINSZ, (char *)&ws) != -1 ||
              ioctl(STDIN_FILENO,  TIOCGWINSZ, (char *)&ws) != -1) ||
             ws.ws_col != 0) termwidth = ws.ws_col;
-        char *formatButPath = "%9ld.%ld %5ld %c%c%c%c %c%c%c%c %-19.19s";
+        char *formatButPath = "%9ld.%ld %5ld %4s %4s %-19.19s";
         int pathlen = termwidth - strlen(banner) - 1;
         // XXX don't ever free 'format', should fix if we get called repeatedly
         if (OPTS.longList) {
@@ -327,68 +349,39 @@ CPSProcessSerNum matchApplication(CPSProcessInfoRec *info) {
         }
     }
     
-    while ( (err = CPSGetNextProcess(&psn)) == noErr) {
-        err = CPSGetProcessInfo(&psn, info, path, pathMaxLength, &len, name, nameMaxLength);
-        if (err != noErr) osstatusexit(err, "can't get information for process PSN %ld.%ld", psn.hi, psn.lo);
-
-#if DEBUG
-        fprintf(stderr, "%ld.%ld: %s : %s\n", psn.hi, psn.lo, name, path);
-#endif
+    CFDictionaryRef info = NULL;
+    while ( (err = GetNextProcess(&psn)) == noErr) {
+        if (info != NULL) CFRelease(info);
+        info = ProcessInformationCopyDictionary(&psn, kProcessDictionaryIncludeAllInformationMask);
+        if (info == NULL) errexit("can't get information for process with PSN %ld.%ld",
+                                  psn.lowLongOfPSN, psn.highLongOfPSN);
 
         switch (OPTS.matchType) {
             case MATCH_ALL:
                 break;
-            case MATCH_CREATOR: if (OPTS.creator != info->ExecFileCreator) continue;
+            case MATCH_CREATOR: if (!infoStringMatches(info, CFSTR("FileCreator"), OPTS.creator)) continue;
                 break;
-            case MATCH_NAME: if (strcmp(name, OPTS.name) != 0) continue;
+            case MATCH_NAME: if (!infoStringMatches(info, CFSTR("CFBundleName"), OPTS.name)) continue;
                 break;
-            case MATCH_PID: if (OPTS.pid != info->UnixPID) continue;
+            case MATCH_PID: err = GetProcessPID(&psn, &pid); if (err != noErr || OPTS.pid != pid) continue;
                 break;
-            case MATCH_PATH: if (strcmp(path, OPTS.path) != 0) continue;
+            case MATCH_PATH: if (!infoStringMatches(info, CFSTR("BundlePath"), OPTS.path)) continue;
                 break;
-            case MATCH_BUNDLE_ID:
-               {
-                   CFStringRef bundleID;
-                   if (!bundleIdentifierForApplication(&bundleID, path))
-                       errexit("can't get bundle location for process '%s' (PSN %ld.%ld, pid %ld)", name, psn.hi, psn.lo, info->UnixPID);
-                   if (bundleID != NULL) {
-                       CFComparisonResult result = CFStringCompare(OPTS.bundleID, bundleID, kCFCompareCaseInsensitive);
-                       if (result == kCFCompareEqualTo)
-                           break;
-		       CFRelease(bundleID);
-                   }
-                   continue;
-               }
+            case MATCH_BUNDLE_ID: if (!infoStringMatches(info, CFSTR("CFBundleIdentifier"), OPTS.bundleID)) continue;
+                break;
             default:
                 errexit("internal error: invalid match type");
         }
         if (OPTS.appAction == APP_LIST) {
-            char *type = (char *)&(info->ExecFileType), *crea = (char *)&(info->ExecFileCreator);
-#define CXX(c) ( (c) < ' ' ? ' ' : (c) )
-#define OSTYPE_CHAR_ARGS(t) CXX(t[0]), CXX(t[1]), CXX(t[2]), CXX(t[3])
-            printf(format, psn.hi, psn.lo, info->UnixPID,
-		   OSTYPE_CHAR_ARGS(type), OSTYPE_CHAR_ARGS(crea),
-                   name, path);
+            if (GetProcessPID(&psn, &pid) != noErr)
+                pid = -1;
+            printf(format, psn.lowLongOfPSN, psn.highLongOfPSN, pid,
+                   getInfoCString(info, CFSTR("FileType")), getInfoCString(info, CFSTR("FileCreator")),
+                   getInfoCString(info, CFSTR("CFBundleName")), getInfoCString(info, CFSTR("BundlePath")));
             if (OPTS.longList) {
-                CFStringRef bundleID = NULL;
-                if (!bundleIdentifierForApplication(&bundleID, path))
-                    errexit("can't get bundle location for process '%s' (PSN %ld.%ld, pid %ld)", name, psn.hi, psn.lo, info->UnixPID);
-                if (bundleID != NULL) {
-                    char *bundleIDStr = (char *)CFStringGetCStringPtr(bundleID, CFStringGetSystemEncoding());
-                    if (bundleIDStr == NULL) {
-                        CFIndex bundleIDLength = CFStringGetLength(bundleID) + 1;
-                        bundleIDStr = (char *)malloc(bundleIDLength * sizeof(char));
-                        if (!CFStringGetCString(bundleID, bundleIDStr, bundleIDLength, CFStringGetSystemEncoding())) {
-                            CFShow(bundleIDStr);
-                            errexit("internal error: string encoding conversion failed for bundle identifier");
-                        }
-                        printf(" (%s)", bundleIDStr);
-                        free(bundleIDStr);
-                    } else {
-                        printf(" (%s)", bundleIDStr);
-                    }
-                    CFRelease(bundleID);
-                }
+                char *bundleID = getInfoCString(info, CFSTR("CFBundleIdentifier"));
+                if (bundleID[0] != '\0')
+                    printf(" (%s)", bundleID);
             }
             putchar('\n');
             continue;
@@ -409,26 +402,27 @@ int main(int argc, char * const argv[]) {
     APP_NAME = argv[0];
     getargs(argc, argv);
 
-    // need to establish connection with window server
-    InitCursor();
-
-    CPSProcessInfoRec info;
-    CPSProcessSerNum psn = matchApplication(&info);
+    ProcessSerialNumber psn = matchApplication();
 
     const char *verb = NULL;
     switch (OPTS.appAction) {
         case APP_NONE: break;
         case APP_LIST: break; // already handled in matchApplication
-        case APP_SWITCH: err = CPSSetFrontProcess(&psn); verb = "set front"; break;
-        case APP_SHOW: err = CPSPostShowReq(&psn); verb = "show"; break;
-        case APP_HIDE: err = CPSPostHideReq(&psn); verb = "hide"; break;
+        case APP_SWITCH: err = SetFrontProcess(&psn); verb = "set front"; break;
+        case APP_SHOW: err = ShowHideProcess(&psn, true); verb = "show"; break;
+        case APP_HIDE: err = ShowHideProcess(&psn, false); verb = "hide"; break;
         case APP_QUIT: err = quitApplication(&psn); verb = "quit"; break;
-        case APP_KILL: err = CPSPostKillRequest(&psn, kNilOptions); verb = "kill"; break;
-        case APP_KILL_HARD: err = CPSPostKillRequest(&psn, bfCPSKillHard); verb = "kill"; break;
-        case APP_PRINT_PID:
-            if (info.UnixPID <= 0) errexit("can't get process ID");
-            printf("%lu\n", info.UnixPID); // pid_t is signed, but this field isn't
+        case APP_KILL: err = KillProcess(&psn); verb = "send SIGTERM to"; break;
+        case APP_KILL_HARD:
+        {
+            if (kill(getPID(&psn), SIGKILL) == -1)
+                err = (errno == ESRCH) ? procNotFound : (errno == EPERM ? permErr : paramErr);
+            verb = "send SIGKILL to";
             break;
+        }
+        case APP_PRINT_PID: printf("%d\n", getPID(&psn)); break;
+        case APP_FRONTMOST: err = SetFrontProcessWithOptions(&psn, kSetFrontProcessFrontWindowOnly);
+            verb = "bring frontmost window to front"; break;
         default:
             errexit("internal error: invalid application action");
     }
@@ -448,10 +442,10 @@ int main(int argc, char * const argv[]) {
         case FINAL_SWITCH:
             psn = frontApplication();
 #if DEBUG
-            fprintf(stderr, "posting show request for %ld.%ld\n", psn.hi, psn.lo);
+            fprintf(stderr, "posting show request for %ld.%ld\n", psn.lowLongOfPSN, psn.highLongOfPSN);
 #endif
             if (OPTS.action != ACTION_NONE) usleep(750000); // XXX
-            err = CPSPostShowReq(&psn) || CPSSetFrontProcess(&psn);
+            err = ShowHideProcess(&psn, true) || SetFrontProcess(&psn);
             verb = "bring current application's windows to the front";
             break;
         default:
