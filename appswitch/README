@@ -1,4 +1,4 @@
-appswitch 1.1d1 [unreleased]
+appswitch 1.1d2 [unreleased]
 ===============
 
 A command-line interface to the Mac OS X process manager.
@@ -42,9 +42,8 @@ COMPILATION
 -----------
 
 An Xcode project, 'appswitch.xcodeproj', is included.  A precompiled
-Universal binary is also provided.  'appswitch' was developed and
-tested under Mac OS 10.4.8 with Xcode 2.4, and does not require any
-additional software to build.
+Universal binary is also provided.  'appswitch' should build under
+Xcode 2.4 or later.
 
 USAGE
 -----
@@ -73,11 +72,13 @@ VERSION HISTORY
 ---------------
 
 1.1 - unreleased
- - switched to Process Manager instead of CPS (slower but more
-   compatible)
+ - switched to Process Manager instead of CPS where possible - slower
+   but more compatible (r. 4808397, 4808400, 5579375)
  - fixed description of -k option: SIGTERM, not SIGINT
  - added -f option
- - Universal Binary, compatible with Intel Macs
+ - fixed incorrect output/behavior with Mac OS X 10.5
+ - Universal Binary, compatible with Intel Macs; built for OS X 10.4
+   or later
 1.0.1 - 16 May 2004
  - fixed crash matching applications with no bundle identifier
  - fixed process listing PSN column width

@@ -2,7 +2,7 @@
  appswitch - a command-line application switcher
  Nicholas Riley <appswitch@sabi.net>
 
- Copyright (c) 2003-06, Nicholas Riley
+ Copyright (c) 2003-07, Nicholas Riley
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
@@ -25,7 +25,7 @@
 
 const char *APP_NAME;
 
-#define VERSION "1.1d1"
+#define VERSION "1.1d2"
 
 struct {
     CFStringRef creator;
@@ -63,6 +63,7 @@ static errList ERRS = {
     { connectionInvalid, "application is not background-only", },
     // CoreGraphics errors
     { kCGErrorIllegalArgument, "window server error.\nAre you logged in?" },
+    { kCGErrorInvalidContext, "application context unavailable" },
     { fnfErr, "file not found" },
     // (abused) errors
     { permErr, "no permission" },
@@ -294,27 +295,16 @@ bool infoStringMatches(CFDictionaryRef info, CFStringRef key, CFStringRef matchS
     return CFStringCompare(str, matchStr, kCFCompareCaseInsensitive) == kCFCompareEqualTo;
 }
 
-char *getInfoCString(CFDictionaryRef info, CFStringRef key) {
-    CFStringRef str = CFDictionaryGetValue(info, key);
+CFStringRef stringTrimmedToWidth(CFStringRef str, CFIndex width) {
     if (str == NULL)
-        return "";
-    static char *cStr = NULL;
-    static bool wasDynamic = false;
-    if (wasDynamic)
-        free(cStr);
-    cStr = (char *)CFStringGetCStringPtr(str, CFStringGetSystemEncoding());
-    if (cStr != NULL) {
-        wasDynamic = false;
-    } else {
-        CFIndex cStrLength = CFStringGetMaximumSizeOfFileSystemRepresentation(str);
-        cStr = (char *)malloc(cStrLength * sizeof(char));
-        if (!CFStringGetFileSystemRepresentation(str, cStr, cStrLength)) {
-            CFShow(cStr);
-            errexit("internal error: string encoding conversion failed");
-        }
-        wasDynamic = true;
-    }
-    return cStr;
+        str = CFSTR("");
+    CFIndex length = CFStringGetLength(str);
+    if (length == width)
+        return CFRetain(str);
+    
+    CFMutableStringRef padStr = CFStringCreateMutableCopy(NULL, width, str);
+    CFStringPad(padStr, CFSTR(" "), width, 0);
+    return padStr;
 }
 
 ProcessSerialNumber matchApplication(void) {
@@ -325,7 +315,9 @@ ProcessSerialNumber matchApplication(void) {
         kNoProcess, kNoProcess
     };
     pid_t pid;
-    char *format = NULL;
+    CFStringRef format = NULL;
+    CFIndex nameWidth = 19;
+    CFIndex pathWidth = 0;
     if (OPTS.appAction == APP_LIST) {
         int termwidth = 80;
         struct winsize ws;
@@ -335,17 +327,21 @@ ProcessSerialNumber matchApplication(void) {
              ioctl(STDERR_FILENO, TIOCGWINSZ, (char *)&ws) != -1 ||
              ioctl(STDIN_FILENO,  TIOCGWINSZ, (char *)&ws) != -1) ||
             ws.ws_col != 0) termwidth = ws.ws_col;
-        char *formatButPath = "%9ld.%ld %5ld %4s %4s %-19.19s";
-        int pathlen = termwidth - strlen(banner) - 1;
-        // XXX don't ever free 'format', should fix if we get called repeatedly
+        char *formatButPath = "%9ld.%ld %5ld %@ %@ %@";
+        // XXX don't ever release 'format', should fix if we get called repeatedly
         if (OPTS.longList) {
+            pathWidth = 1;
             printf("%s PATH (bundle identifier)\n", banner);
-            asprintf(&format, "%s %%s", formatButPath);
-        } else if (pathlen >= 4) {
-            printf("%s PATH\n", banner);
-            asprintf(&format, "%s %%-%d.%ds", formatButPath, pathlen, pathlen);
+            format = CFStringCreateWithFormat(NULL, NULL, CFSTR("%s %%@"), formatButPath);
         } else {
-            format = formatButPath;
+            pathWidth = termwidth - strlen(banner) - 1;
+            if (pathWidth >= 4) {
+                printf("%s PATH\n", banner);
+                format = CFStringCreateWithFormat(NULL, NULL, CFSTR("%s %%@"), formatButPath);
+            } else {
+                pathWidth = 0;
+                format = CFStringCreateWithCString(NULL, formatButPath, kCFStringEncodingUTF8);
+            }
         }
     }
     
@@ -365,7 +361,8 @@ ProcessSerialNumber matchApplication(void) {
                 break;
             case MATCH_PID: err = GetProcessPID(&psn, &pid); if (err != noErr || OPTS.pid != pid) continue;
                 break;
-            case MATCH_PATH: if (!infoStringMatches(info, CFSTR("BundlePath"), OPTS.path)) continue;
+            case MATCH_PATH: if (!infoStringMatches(info, CFSTR("BundlePath"), OPTS.path) &&
+                !infoStringMatches(info, CFSTR("CFBundleExecutable"), OPTS.path)) continue;
                 break;
             case MATCH_BUNDLE_ID: if (!infoStringMatches(info, CFSTR("CFBundleIdentifier"), OPTS.bundleID)) continue;
                 break;
@@ -375,15 +372,46 @@ ProcessSerialNumber matchApplication(void) {
         if (OPTS.appAction == APP_LIST) {
             if (GetProcessPID(&psn, &pid) != noErr)
                 pid = -1;
-            printf(format, psn.lowLongOfPSN, psn.highLongOfPSN, pid,
-                   getInfoCString(info, CFSTR("FileType")), getInfoCString(info, CFSTR("FileCreator")),
-                   getInfoCString(info, CFSTR("CFBundleName")), getInfoCString(info, CFSTR("BundlePath")));
-            if (OPTS.longList) {
-                char *bundleID = getInfoCString(info, CFSTR("CFBundleIdentifier"));
-                if (bundleID[0] != '\0')
-                    printf(" (%s)", bundleID);
+            CFStringRef path = NULL;
+            // XXX padding/truncation probably breaks with double-width characters
+            if (pathWidth) {
+                path = CFDictionaryGetValue(info, CFSTR("BundlePath"));
+                if (path == NULL)
+                    path = CFDictionaryGetValue(info, CFSTR("CFBundleExecutable"));
+                if (!OPTS.longList)
+                    path = stringTrimmedToWidth(path, pathWidth);
             }
-            putchar('\n');
+            CFStringRef name = stringTrimmedToWidth(CFDictionaryGetValue(info, CFSTR("CFBundleName")), nameWidth);
+            CFStringRef type = stringTrimmedToWidth(CFDictionaryGetValue(info, CFSTR("FileType")), 4);
+            CFStringRef creator = stringTrimmedToWidth(CFDictionaryGetValue(info, CFSTR("FileCreator")), 4);
+            CFStringRef line = CFStringCreateWithFormat(NULL, NULL, format,
+                psn.lowLongOfPSN, psn.highLongOfPSN, pid, type, creator, name, path);
+            CFRelease(name);
+            CFRelease(type);
+            CFRelease(creator);
+            if (!OPTS.longList)
+                CFRelease(path);
+            else {
+                CFStringRef bundleID = CFDictionaryGetValue(info, CFSTR("CFBundleIdentifier"));
+                if (bundleID != NULL && CFStringGetLength(bundleID) != 0) {
+                    CFStringRef origLine = line;
+                    line = CFStringCreateWithFormat(NULL, NULL, CFSTR("%@ (%@)"), line, bundleID);
+                    CFRelease(origLine);
+                }
+            }
+            char *cStr = (char *)CFStringGetCStringPtr(line, CFStringGetSystemEncoding());
+            if (cStr != NULL) {
+                puts(cStr);
+            } else {
+                CFIndex cStrLength = CFStringGetMaximumSizeOfFileSystemRepresentation(line);
+                cStr = (char *)malloc(cStrLength * sizeof(char));
+                if (!CFStringGetFileSystemRepresentation(line, cStr, cStrLength)) {
+                    CFShow(cStr);
+                    errexit("internal error: string encoding conversion failed");
+                }
+                puts(cStr);
+                free(cStr);
+            }
             continue;
         }
         return psn;
@@ -393,7 +421,7 @@ ProcessSerialNumber matchApplication(void) {
     if (OPTS.appAction == APP_LIST) return frontApplication();
 
     errexit("can't find matching process");
-    return psn;
+    return psn; // not reached
 }
 
 int main(int argc, char * const argv[]) {
@@ -409,12 +437,14 @@ int main(int argc, char * const argv[]) {
         case APP_NONE: break;
         case APP_LIST: break; // already handled in matchApplication
         case APP_SWITCH: err = SetFrontProcess(&psn); verb = "set front"; break;
+        // XXX show/hide return paramErr - rdar://problem/5579375 - ask on carbon-dev later
         case APP_SHOW: err = ShowHideProcess(&psn, true); verb = "show"; break;
         case APP_HIDE: err = ShowHideProcess(&psn, false); verb = "hide"; break;
         case APP_QUIT: err = quitApplication(&psn); verb = "quit"; break;
         case APP_KILL: err = KillProcess(&psn); verb = "send SIGTERM to"; break;
         case APP_KILL_HARD:
         {
+            // no Process Manager equivalent - rdar://problem/4808400
             if (kill(getPID(&psn), SIGKILL) == -1)
                 err = (errno == ESRCH) ? procNotFound : (errno == EPERM ? permErr : paramErr);
             verb = "send SIGKILL to";
@@ -430,6 +460,7 @@ int main(int argc, char * const argv[]) {
 
     switch (OPTS.action) {
         case ACTION_NONE: break;
+        // no Process Manager equivalents - rdar://problem/4808397
         case ACTION_SHOW_ALL: err = CPSPostShowAllReq(&psn); verb = "show all"; break;
         case ACTION_HIDE_OTHERS: err = CPSPostHideMostReq(&psn); verb = "hide other"; break;
         default:

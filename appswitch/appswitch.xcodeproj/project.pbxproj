@@ -31,7 +31,7 @@
 /* Begin PBXFileReference section */
 		08FB7796FE84155DC02AAC07 /* main.c */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.c; path = main.c; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		C6859E970290921104C91782 /* appswitch.1 */ = {isa = PBXFileReference; lastKnownFileType = text.man; path = appswitch.1; sourceTree = "<group>"; };
-		E1607F080AF3700B001EAB72 /* appswitch */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = "compiled.mach-o.executable"; path = appswitch; sourceTree = BUILT_PRODUCTS_DIR; };
+		E1607F080AF3700B001EAB72 /* appswitch */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = appswitch; sourceTree = BUILT_PRODUCTS_DIR; };
 		E16C83CC03F7AF7B00050002 /* README */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = README; sourceTree = "<group>"; };
 		E1A0BD3203EFAD9E00050001 /* CPS.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = CPS.h; sourceTree = "<group>"; };
 		E1A0BD4C03EFB64400050001 /* ApplicationServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ApplicationServices.framework; path = /System/Library/Frameworks/ApplicationServices.framework; sourceTree = "<absolute>"; };
@@ -134,9 +134,11 @@
 		08FB7793FE84155DC02AAC07 /* Project object */ = {
 			isa = PBXProject;
 			buildConfigurationList = E1607EEF0AF36FB6001EAB72 /* Build configuration list for PBXProject "appswitch" */;
+			compatibilityVersion = "Xcode 2.4";
 			hasScannedForEncodings = 1;
 			mainGroup = 08FB7794FE84155DC02AAC07 /* appswitch */;
 			projectDirPath = "";
+			projectRoot = "";
 			targets = (
 				E1607EF90AF3700B001EAB72 /* appswitch */,
 			);
@@ -168,10 +170,7 @@
 		E1607EF00AF36FB6001EAB72 /* Development */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ARCHS = (
-					ppc,
-					i386,
-				);
+				SDKROOT = /Developer/SDKs/MacOSX10.4u.sdk;
 			};
 			name = Development;
 		};
@@ -182,18 +181,9 @@
 					ppc,
 					i386,
 				);
+				SDKROOT = /Developer/SDKs/MacOSX10.4u.sdk;
 			};
 			name = Deployment;
-		};
-		E1607EF20AF36FB6001EAB72 /* Default */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ARCHS = (
-					ppc,
-					i386,
-				);
-			};
-			name = Default;
 		};
 		E1607F050AF3700B001EAB72 /* Development */ = {
 			isa = XCBuildConfiguration;
@@ -231,20 +221,6 @@
 			};
 			name = Deployment;
 		};
-		E1607F070AF3700B001EAB72 /* Default */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				INSTALL_PATH = "$(HOME)/bin";
-				MACOSX_DEPLOYMENT_TARGET = 10.3;
-				PRODUCT_NAME = appswitch;
-				WARNING_CFLAGS = (
-					"-Wmost",
-					"-Wno-four-char-constants",
-					"-Wno-unknown-pragmas",
-				);
-			};
-			name = Default;
-		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -253,20 +229,18 @@
 			buildConfigurations = (
 				E1607EF00AF36FB6001EAB72 /* Development */,
 				E1607EF10AF36FB6001EAB72 /* Deployment */,
-				E1607EF20AF36FB6001EAB72 /* Default */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Default;
+			defaultConfigurationName = Deployment;
 		};
 		E1607F040AF3700B001EAB72 /* Build configuration list for PBXNativeTarget "appswitch" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				E1607F050AF3700B001EAB72 /* Development */,
 				E1607F060AF3700B001EAB72 /* Deployment */,
-				E1607F070AF3700B001EAB72 /* Default */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Default;
+			defaultConfigurationName = Deployment;
 		};
 /* End XCConfigurationList section */
 	};
