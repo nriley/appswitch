@@ -1,5 +1,5 @@
-appswitch 1.1d2 [unreleased]
-===============
+appswitch 1.1 [6 November 2007]
+=============
 
 A command-line interface to the Mac OS X process manager.
 
@@ -11,7 +11,7 @@ WHAT IS IT?
 
 If you use shell scripts to automate Mac OS X applications, you may
 need to switch between applications.  You could use AppleScript via
-osascript(1), but that would take several seconds for the script to
+osascript(1), but that can take several seconds for the script to
 compile and execute - or you could use appswitch, which works almost
 instantly.
 
@@ -71,9 +71,9 @@ Please send to the author, Nicholas Riley, at <appswitch@sabi.net>.
 VERSION HISTORY
 ---------------
 
-1.1 - unreleased
+1.1   - 6 November 2007
  - switched to Process Manager instead of CPS where possible - slower
-   but more compatible (r. 4808397, 4808400, 5579375)
+   but more compatible (r. 4808397, 4808400)
  - fixed description of -k option: SIGTERM, not SIGINT
  - added -f option
  - fixed incorrect output/behavior with Mac OS X 10.5

@@ -25,7 +25,7 @@
 
 const char *APP_NAME;
 
-#define VERSION "1.1d2"
+#define VERSION "1.1"
 
 struct {
     CFStringRef creator;
@@ -71,7 +71,7 @@ static errList ERRS = {
 };
 
 void usage() {
-    fprintf(stderr, "usage: %s [-sShHqklLPfF] [-c creator] [-i bundleID] [-a name] [-p pid] [path]\n"
+    fprintf(stderr, "usage: %s [-sShHqkKlLPfF] [-c creator] [-i bundleID] [-a name] [-p pid] [path]\n"
             "  -s            show application, bring windows to front (do not switch)\n"
             "  -S            show all applications\n"
             "  -h            hide application\n"
@@ -89,7 +89,7 @@ void usage() {
             "  -p pid        match application by process identifier\n"
             "  -a name       match application by name\n"
             , APP_NAME);
-    fprintf(stderr, "appswitch "VERSION" (c) 2003-06 Nicholas Riley <http://web.sabi.net/nriley/software/>.\n"
+    fprintf(stderr, "appswitch "VERSION" (c) 2003-07 Nicholas Riley <http://web.sabi.net/nriley/software/>.\n"
             "Please send bugs, suggestions, etc. to <appswitch@sabi.net>.\n");
 
     exit(1);
@@ -430,14 +430,19 @@ int main(int argc, char * const argv[]) {
     APP_NAME = argv[0];
     getargs(argc, argv);
 
-    ProcessSerialNumber psn = matchApplication();
+    ProcessSerialNumber psn;
+    
+    // required in Leopard to prevent paramErr - rdar://problem/5579375
+    err = GetCurrentProcess(&psn);
+    if (err != noErr) osstatusexit(err, "can't contact window server");
+    
+    psn = matchApplication();
 
     const char *verb = NULL;
     switch (OPTS.appAction) {
         case APP_NONE: break;
         case APP_LIST: break; // already handled in matchApplication
         case APP_SWITCH: err = SetFrontProcess(&psn); verb = "set front"; break;
-        // XXX show/hide return paramErr - rdar://problem/5579375 - ask on carbon-dev later
         case APP_SHOW: err = ShowHideProcess(&psn, true); verb = "show"; break;
         case APP_HIDE: err = ShowHideProcess(&psn, false); verb = "hide"; break;
         case APP_QUIT: err = quitApplication(&psn); verb = "quit"; break;
