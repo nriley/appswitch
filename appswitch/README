@@ -30,8 +30,8 @@ which is in the default path.  You should subsequently be able to use
 else, modify the install line as appropriate.
 
 % sudo /usr/bin/install -d /usr/local/bin /usr/local/man/man1
-% sudo /usr/bin/install -c build/appswitch /usr/local/bin
-% sudo /usr/bin/install -c appswitch.1 /usr/local/man/man1
+% sudo /usr/bin/install appswitch /usr/local/bin
+% sudo /usr/bin/install appswitch.1 /usr/local/man/man1
 % rehash				# if necessary
 
 Uninstallation:
