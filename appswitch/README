@@ -1,5 +1,5 @@
-appswitch 1.1 [6 November 2007]
-=============
+appswitch 1.1.1d1 [unreleased]
+===============
 
 A command-line interface to the Mac OS X process manager.
 
@@ -71,6 +71,9 @@ Please send to the author, Nicholas Riley, at <appswitch@sabi.net>.
 VERSION HISTORY
 ---------------
 
+1.1.1 - unreleased
+ - use Cocoa instead of CPS to show all/hide other applications
+   (r. 4808397)
 1.1   - 6 November 2007
  - switched to Process Manager instead of CPS where possible - slower
    but more compatible (r. 4808397, 4808400)

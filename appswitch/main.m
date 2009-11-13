@@ -2,7 +2,7 @@
  appswitch - a command-line application switcher
  Nicholas Riley <appswitch@sabi.net>
 
- Copyright (c) 2003-07, Nicholas Riley
+ Copyright (c) 2003-09, Nicholas Riley
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
@@ -21,11 +21,11 @@
 #include <signal.h>
 #include <sys/ioctl.h>
 #include <ApplicationServices/ApplicationServices.h>
-#include "CPS.h"
+#import <AppKit/AppKit.h>
 
 const char *APP_NAME;
 
-#define VERSION "1.1"
+#define VERSION "1.1.1d1"
 
 struct {
     CFStringRef creator;
@@ -466,8 +466,18 @@ int main(int argc, char * const argv[]) {
     switch (OPTS.action) {
         case ACTION_NONE: break;
         // no Process Manager equivalents - rdar://problem/4808397
-        case ACTION_SHOW_ALL: err = CPSPostShowAllReq(&psn); verb = "show all"; break;
-        case ACTION_HIDE_OTHERS: err = CPSPostHideMostReq(&psn); verb = "hide other"; break;
+        case ACTION_SHOW_ALL:
+            [[NSAutoreleasePool alloc] init];
+            [[NSApplication sharedApplication] unhideAllApplications: nil];
+            err = noErr;
+            verb = "show all";
+            break;
+        case ACTION_HIDE_OTHERS:
+            [[NSAutoreleasePool alloc] init];
+            [[NSApplication sharedApplication] hideOtherApplications: nil];
+            err = noErr;
+            verb = "hide other";
+            break;
         default:
             errexit("internal error: invalid action");
     }
