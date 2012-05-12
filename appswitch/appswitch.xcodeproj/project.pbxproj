@@ -156,7 +156,7 @@
 				COPY_PHASE_STRIP = NO;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
 				GCC_OPTIMIZATION_LEVEL = 0;
-				INSTALL_PATH = "$(HOME)/bin";
+				INSTALL_PATH = /;
 				PRODUCT_NAME = appswitch;
 				WARNING_CFLAGS = (
 					"-Wmost",
@@ -171,7 +171,7 @@
 			buildSettings = {
 				COPY_PHASE_STRIP = YES;
 				GCC_ENABLE_FIX_AND_CONTINUE = NO;
-				INSTALL_PATH = "$(HOME)/bin";
+				INSTALL_PATH = /;
 				PRODUCT_NAME = appswitch;
 				WARNING_CFLAGS = (
 					"-Wmost",

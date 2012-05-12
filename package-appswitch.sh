@@ -1,21 +1,39 @@
-#!/bin/sh
+#!/bin/zsh -ef
 
 set -x -v
 
-cd appswitch && \
-find . -name \*~ -exec rm '{}' \; && \
-xcodebuild -configuration Deployment clean && \
-xcodebuild -configuration Deployment DSTROOT=/ "INSTALL_PATH=$PWD" install && \
-SetFile -c 'ttxt' -t 'TEXT' README VERSION appswitch.1 && \
-sudo /usr/bin/install -d /usr/local/bin /usr/local/man/man1 && \
-sudo /usr/bin/install appswitch /usr/local/bin && \
-sudo /usr/bin/install -m 644 appswitch.1 /usr/local/man/man1 && \
-chmod 755 appswitch && \
-chmod 644 appswitch.1 && \
-VERSION=`cat VERSION` TARBALL="appswitch-$VERSION.tar.gz" && \
-cd .. && \
-rm -f appswitch-$VERSION $TARBALL && \
-ln -s appswitch appswitch-$VERSION && \
-tar --owner=root --group=wheel --exclude=.DS_Store --exclude=.svn --exclude=.gdb_history --exclude=build --exclude=\*.mode* --exclude=\*.pbxuser --exclude=\*.perspective -zchf appswitch-$VERSION.tar.gz appswitch-$VERSION && \
+PACKAGEDIR="$PWD"
+PRODUCT="appswitch"
+
+# gather information
+cd $PACKAGEDIR/$PRODUCT
+VERSION=`cat VERSION`
+TARBALL="$PRODUCT-$VERSION.tar.gz"
+DISTDIR="$PRODUCT-$VERSION"
+EXCLUSIONS=("${(ps:\000:)$(git ls-files -zo --directory -x $PRODUCT/$PRODUCT)}")
+EXCLUSIONS=($EXCLUSIONS) # remove empty items
+
+# clean and build
+find . -name \*~ -exec rm '{}' \;
+rm -rf build/
+xcodebuild -configuration Deployment DSTROOT=$PWD DEPLOYMENT_LOCATION=YES install
+SetFile -c 'ttxt' -t 'TEXT' README VERSION $PRODUCT.1
+chmod 755 $PRODUCT
+chmod 644 $PRODUCT.1
+
+# install locally
+sudo -s <<EOF
+umask 022
+/bin/mkdir -p /usr/local/bin /usr/local/man/man1
+/usr/bin/install $PRODUCT /usr/local/bin
+/usr/bin/install -m 644 $PRODUCT.1 /usr/local/man/man1
+EOF
+
+# create tarball
+cd ..
+rm -f $DISTDIR $TARBALL
+ln -s $PRODUCT $DISTDIR
+tar -zcLf $TARBALL @<(tar -cL --exclude=${^EXCLUSIONS} --format=mtree --options='!uname,gname' $DISTDIR | sed -e 's/^\([^#].*\)$/\1 uname=root gname=wheel/')
+
+# update Web presence
 # scp $TARBALL ainaz:web/nriley/software/
-:
