@@ -110,7 +110,7 @@ char *osstatusstr(OSStatus err) {
     len = strlen(errDesc) + 10 * sizeof(char);
     str = (char *)malloc(len);
     if (str != NULL)
-        snprintf(str, len, "%s (%ld)", errDesc, err);
+        snprintf(str, len, "%s (%ld)", errDesc, (long)err);
     else
         str = failedStr;
     return str;
