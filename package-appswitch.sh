@@ -33,7 +33,7 @@ EOF
 cd ..
 rm -f $DISTDIR $TARBALL
 ln -s $PRODUCT $DISTDIR
-tar -zcLf $TARBALL @<(tar -cL --exclude=${^EXCLUSIONS} --format=mtree --options='!uname,gname' $DISTDIR | sed -e 's/^\([^#].*\)$/\1 uname=root gname=wheel/')
+tar -zcLf $TARBALL --exclude=${^EXCLUSIONS} $DISTDIR
 
 # update Web presence
 # scp $TARBALL ainaz:web/nriley/software/
