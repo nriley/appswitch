@@ -1,16 +1,16 @@
-appswitch 1.1.1d1 [unreleased]
+appswitch 1.1.1 [12 May 2012]
 ===============
 
-A command-line interface to the Mac OS X process manager.
+A command-line interface to the OS X process manager.
 
 Written by Nicholas Riley <mailto:appswitch@sabi.net>.
-Obtain updates from <http://web.sabi.net/nriley/software/>.
+Obtain updates from <http://sabi.net/nriley/software/>.
 
 WHAT IS IT?
 -----------
 
-If you use shell scripts to automate Mac OS X applications, you may
-need to switch between applications.  You could use AppleScript via
+If you use shell scripts to automate OS X applications, you may need
+to switch between applications.  You could use AppleScript via
 osascript(1), but that can take several seconds for the script to
 compile and execute - or you could use appswitch, which works almost
 instantly.
@@ -30,8 +30,9 @@ which is in the default path.  You should subsequently be able to use
 else, modify the install line as appropriate.
 
 % sudo /usr/bin/install -d /usr/local/bin /usr/local/man/man1
+% sudo chmod 755 /usr/local/bin /usr/local/man /usr/local/man/man1
 % sudo /usr/bin/install appswitch /usr/local/bin
-% sudo /usr/bin/install appswitch.1 /usr/local/man/man1
+% sudo /usr/bin/install -m 644 appswitch.1 /usr/local/man/man1
 % rehash				# if necessary
 
 Uninstallation:
@@ -43,25 +44,13 @@ COMPILATION
 
 An Xcode project, 'appswitch.xcodeproj', is included.  A precompiled
 Universal binary is also provided.  'appswitch' should build under
-Xcode 2.4 or later.
+Xcode 3.2 or later.
 
 USAGE
 -----
 
 Just type 'appswitch' by itself to receive usage information.  See the
 manual page (man appswitch) for more information.
-
-If you're curious about the speed difference between appswitch and
-other methods, this should give you some indication.
-
-appswitch -a Emacs          0.01s user 0.01s system 28% cpu 0.069 total
-launch -a Emacs	            0.01s user 0.01s system 35% cpu 0.076 total
-open -a Emacs               0.04s user 0.02s system 52% cpu 0.115 total
-osascript -e 'tell application "Emacs" to activate'
-                            0.13s user 0.06s system 59% cpu 0.326 total
-
-The above tests were performed on a Mac mini Core Duo 1.66 GHz; slower
-systems show more dramatic differences.
 
 COMMENTS, SUGGESTIONS, BUG REPORTS, ETC.
 ----------------------------------------
@@ -71,9 +60,11 @@ Please send to the author, Nicholas Riley, at <appswitch@sabi.net>.
 VERSION HISTORY
 ---------------
 
-1.1.1 - unreleased
+1.1.1 - 12 May 2012
  - use Cocoa instead of CPS to show all/hide other applications
-   (r. 4808397)
+   (r. 4808397); required for compilation on OS X 10.7 and later
+ - 32-bit/64-bit Intel binary, built for OS X 10.6 and later
+   (tested on 10.6.8 and 10.7.4)
 1.1   - 6 November 2007
  - switched to Process Manager instead of CPS where possible - slower
    but more compatible (r. 4808397, 4808400)

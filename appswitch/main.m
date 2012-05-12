@@ -2,7 +2,7 @@
  appswitch - a command-line application switcher
  Nicholas Riley <appswitch@sabi.net>
 
- Copyright (c) 2003-09, Nicholas Riley
+ Copyright (c) 2003-12, Nicholas Riley
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
@@ -25,7 +25,7 @@
 
 const char *APP_NAME;
 
-#define VERSION "1.1.1d1"
+#define VERSION "1.1.1"
 
 struct {
     CFStringRef creator;
@@ -89,7 +89,7 @@ void usage() {
             "  -p pid        match application by process identifier\n"
             "  -a name       match application by name\n"
             , APP_NAME);
-    fprintf(stderr, "appswitch "VERSION" (c) 2003-07 Nicholas Riley <http://web.sabi.net/nriley/software/>.\n"
+    fprintf(stderr, "appswitch "VERSION" (c) 2003-12 Nicholas Riley <http://sabi.net/nriley/software/>.\n"
             "Please send bugs, suggestions, etc. to <appswitch@sabi.net>.\n");
 
     exit(1);
