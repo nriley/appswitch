@@ -89,7 +89,7 @@ void usage() {
             "  -p pid        match application by process identifier\n"
             "  -a name       match application by name\n"
             , APP_NAME);
-    fprintf(stderr, "appswitch "VERSION" (c) 2003-12 Nicholas Riley <http://sabi.net/nriley/software/>.\n"
+    fprintf(stderr, "appswitch "VERSION" (c) 2003-15 Nicholas Riley <http://sabi.net/nriley/software/>.\n"
             "Please send bugs, suggestions, etc. to <appswitch@sabi.net>.\n");
 
     exit(1);
