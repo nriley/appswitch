@@ -233,7 +233,7 @@ void getargs(int argc, char * const argv[]) {
         if (argc == 0) {
             if (OPTS.appAction == APP_LIST) {
                 OPTS.matchType = MATCH_ALL;
-            } else if (OPTS.action != ACTION_NONE || OPTS.finalAction != FINAL_NONE) {
+            } else if (OPTS.appAction != ACTION_NONE || OPTS.action != ACTION_NONE || OPTS.finalAction != FINAL_NONE) {
                 OPTS.matchType = MATCH_FRONT;
             } else usage();
         } else if (argc == 1) {
