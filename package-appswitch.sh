@@ -36,4 +36,4 @@ ln -s $PRODUCT $DISTDIR
 tar -zcLf $TARBALL --exclude=${^EXCLUSIONS} $DISTDIR
 
 # update Web presence
-# scp $TARBALL ainaz:web/nriley/software/
+# scp $TARBALL osric:web/nriley/software/
