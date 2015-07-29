@@ -7,7 +7,7 @@ PRODUCT="appswitch"
 
 # gather information
 cd $PACKAGEDIR/$PRODUCT
-VERSION=`cat VERSION`
+VERSION=$(agvtool mvers -terse1)
 TARBALL="$PRODUCT-$VERSION.tar.gz"
 DISTDIR="$PRODUCT-$VERSION"
 EXCLUSIONS=("${(ps:\000:)$(git ls-files -zo --directory -x $PRODUCT/$PRODUCT)}")
@@ -17,7 +17,7 @@ EXCLUSIONS=($EXCLUSIONS) # remove empty items
 find . -name \*~ -exec rm '{}' \;
 rm -rf build/
 xcodebuild -configuration Deployment DSTROOT=$PWD DEPLOYMENT_LOCATION=YES install
-SetFile -c 'ttxt' -t 'TEXT' README VERSION $PRODUCT.1
+SetFile -c 'ttxt' -t 'TEXT' README $PRODUCT.1
 chmod 755 $PRODUCT
 chmod 644 $PRODUCT.1
 

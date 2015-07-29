@@ -25,8 +25,6 @@
 
 const char *APP_NAME;
 
-#define VERSION "1.1.1"
-
 struct {
     CFStringRef creator;
     CFStringRef bundleID;
@@ -89,8 +87,9 @@ void usage() {
             "  -p pid        match application by process identifier\n"
             "  -a name       match application by name\n"
             , APP_NAME);
-    fprintf(stderr, "appswitch "VERSION" (c) 2003-15 Nicholas Riley <http://sabi.net/nriley/software/>.\n"
-            "Please send bugs, suggestions, etc. to <appswitch@sabi.net>.\n");
+    const char *version = [(NSString *)CFBundleGetValueForInfoDictionaryKey(CFBundleGetMainBundle(), CFSTR("CFBundleShortVersionString")) UTF8String];
+    fprintf(stderr, "appswitch %s (c) 2003-15 Nicholas Riley <http://sabi.net/nriley/software/>.\n"
+            "Please send bugs, suggestions, etc. to <appswitch@sabi.net>.\n", version);
 
     exit(1);
 }
