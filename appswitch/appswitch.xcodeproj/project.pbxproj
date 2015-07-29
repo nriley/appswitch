@@ -149,6 +149,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				GCC_VERSION = "";
+				MACOSX_DEPLOYMENT_TARGET = 10.8;
 				SDKROOT = macosx;
 			};
 			name = Development;
@@ -157,6 +158,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				GCC_VERSION = "";
+				MACOSX_DEPLOYMENT_TARGET = 10.8;
 				SDKROOT = macosx;
 			};
 			name = Deployment;
