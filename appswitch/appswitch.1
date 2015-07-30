@@ -1,6 +1,6 @@
 .Dd Sat May 12 2012      \" DATE
 .Dt APPSWITCH 1 LOCAL    \" Program name and manual section number 
-.Os appswitch 1.1.1
+.Os appswitch 1.1.2
 .Sh NAME
 .Nm appswitch
 .Nd switch, hide, show, quit, kill or list OS X applications
@@ -44,6 +44,9 @@ directory whose name typically has the .app extension, for example
 for the default installation location of TextEdit.  For non-packaged
 applications, this is the path to the executable itself.
 .El
+.Pp
+If you don't specify any matching options (and also specify an
+application action), the action applies to the frontmost application.
 .Ss Application actions
 These actions apply to the matched application. If multiple
 applications match the supplied criteria, only the first matching
