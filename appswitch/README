@@ -1,4 +1,4 @@
-appswitch 1.1.2 [unreleased]
+appswitch 1.1.2 [1 August 2015]
 ===============
 
 A command-line interface to the OS X process manager.
@@ -60,7 +60,7 @@ Please send to the author, Nicholas Riley, at <appswitch@sabi.net>.
 VERSION HISTORY
 ---------------
 
-1.1.2 - unreleased
+1.1.2 - 1 August 2015
  - target the current (frontmost) application with -s, -h, -q, -k, -K,
    -P and -f if none of -c, -i, -p, -a or a path are specified
  - 64-bit Intel binary, built for OS X 10.8 and later (tested on 10.8.5,
