@@ -33,7 +33,8 @@ EOF
 cd ..
 rm -f $DISTDIR $TARBALL
 ln -s $PRODUCT $DISTDIR
-tar -zcLf $TARBALL --exclude=${^EXCLUSIONS} $DISTDIR
+/usr/bin/tar -zcLf $TARBALL --exclude=${^EXCLUSIONS} $DISTDIR
+rm -f $DISTDIR
 
 # update Web presence
-# scp $TARBALL osric:web/nriley/software/
+scp $TARBALL osric:web/nriley/software/
