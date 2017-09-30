@@ -24,9 +24,9 @@ chmod 644 $PRODUCT.1
 # install locally
 sudo -s <<EOF
 umask 022
-/bin/mkdir -p /usr/local/bin /usr/local/man/man1
+/bin/mkdir -p /usr/local/bin /usr/local/share/man/man1
 /usr/bin/install $PRODUCT /usr/local/bin
-/usr/bin/install -m 644 $PRODUCT.1 /usr/local/man/man1
+/usr/bin/install -m 644 $PRODUCT.1 /usr/local/share/man/man1
 EOF
 
 # create tarball
