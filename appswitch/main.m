@@ -46,7 +46,7 @@ struct {
     } finalAction;
 } OPTS =
 {
-    kLSUnknownCreator, NULL, NULL, -1, NULL, MATCH_UNKNOWN, APP_NONE, ACTION_NONE, FINAL_NONE, false
+    NULL, NULL, NULL, -1, NULL, MATCH_UNKNOWN, APP_NONE, ACTION_NONE, FINAL_NONE, false
 };
 
 typedef struct {
