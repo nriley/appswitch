@@ -38,6 +38,7 @@ struct {
         APP_NONE, APP_SWITCH, APP_SHOW, APP_HIDE, APP_QUIT, APP_KILL, APP_KILL_HARD, APP_LIST, APP_PRINT_PID, APP_FRONTMOST
     } appAction;
     Boolean longList;
+    Boolean includeXPCInList;
     enum {
         ACTION_NONE, ACTION_SHOW_ALL, ACTION_HIDE_OTHERS
     } action;
@@ -46,7 +47,17 @@ struct {
     } finalAction;
 } OPTS =
 {
-    NULL, NULL, NULL, -1, NULL, MATCH_UNKNOWN, APP_NONE, ACTION_NONE, FINAL_NONE, false
+    .creator = NULL,
+    .bundleID = NULL,
+    .name = NULL,
+    .pid = -1,
+    .path = NULL,
+    .matchType = MATCH_UNKNOWN,
+    .appAction = APP_NONE,
+    .longList = false,
+    .includeXPCInList = false,
+    .action = ACTION_NONE,
+    .finalAction = FINAL_NONE
 };
 
 typedef struct {
@@ -69,7 +80,7 @@ static errList ERRS = {
 };
 
 void usage() {
-    fprintf(stderr, "usage: %s [-sShHqkKlLPfF] [-c creator] [-i bundleID] [-a name] [-p pid] [path]\n"
+    fprintf(stderr, "usage: %s [-sShHqkKlLxPfF] [-c creator] [-i bundleID] [-a name] [-p pid] [path]\n"
             "  -s            show application, bring windows to front (do not switch)\n"
             "  -S            show all applications\n"
             "  -h            hide application\n"
@@ -79,6 +90,7 @@ void usage() {
             "  -K            kill application hard (SIGKILL)\n"
             "  -l            list applications\n"
             "  -L            list applications including full paths and bundle identifiers\n"
+            "  -x            include XPC services in list\n"
             "  -P            print application process ID\n"
             "  -f            bring application's frontmost window to front\n"
             "  -F            bring current application's windows to front\n"
@@ -141,7 +153,7 @@ void getargs(int argc, char * const argv[]) {
 
     if (argc == 1) usage();
 
-    const char *opts = "c:i:p:a:sShHqkKlLPfF";
+    const char *opts = "c:i:p:a:sShHqkKlLxPfF";
 
     while ( (ch = getopt(argc, argv, opts)) != -1) {
         switch (ch) {
@@ -199,6 +211,9 @@ void getargs(int argc, char * const argv[]) {
                 OPTS.appAction = APP_LIST;
                 OPTS.longList = true;
                 break;
+            case 'x':
+                OPTS.includeXPCInList = true;
+                break;
             case 'P':
                 if (OPTS.appAction != APP_NONE) errexit("choose only one of -s, -h, -q, -k, -K, -l, -L, -P, -f options");
                 OPTS.appAction = APP_PRINT_PID;
@@ -241,6 +256,9 @@ void getargs(int argc, char * const argv[]) {
             OPTS.matchType = MATCH_PATH;
         } else usage();
     }
+
+    if (OPTS.appAction != APP_LIST && OPTS.includeXPCInList)
+        errexit("-x is only valid with -l or -L option");
 
     if (OPTS.matchType != MATCH_FRONT && OPTS.appAction == APP_NONE)
         OPTS.appAction = APP_SWITCH;
@@ -300,7 +318,7 @@ CFStringRef stringTrimmedToWidth(CFStringRef str, CFIndex width) {
     CFIndex length = CFStringGetLength(str);
     if (length == width)
         return CFRetain(str);
-    
+
     CFMutableStringRef padStr = CFStringCreateMutableCopy(NULL, width, str);
     CFStringPad(padStr, CFSTR(" "), width, 0);
     return padStr;
@@ -343,7 +361,7 @@ ProcessSerialNumber matchApplication(void) {
             }
         }
     }
-    
+
     CFDictionaryRef info = NULL;
     while ( (err = GetNextProcess(&psn)) == noErr) {
         if (info != NULL) CFRelease(info);
@@ -369,6 +387,8 @@ ProcessSerialNumber matchApplication(void) {
                 errexit("internal error: invalid match type");
         }
         if (OPTS.appAction == APP_LIST) {
+            if (!OPTS.includeXPCInList && infoStringMatches(info, CFSTR("FileType"), CFSTR("XPC!")))
+                continue;
             if (GetProcessPID(&psn, &pid) != noErr)
                 pid = -1;
             CFStringRef path = NULL;
@@ -430,11 +450,11 @@ int main(int argc, char * const argv[]) {
     getargs(argc, argv);
 
     ProcessSerialNumber psn;
-    
+
     // required in Leopard to prevent paramErr - rdar://problem/5579375
     err = GetCurrentProcess(&psn);
     if (err != noErr) osstatusexit(err, "can't contact window server");
-    
+
     psn = matchApplication();
 
     const char *verb = NULL;
@@ -494,7 +514,7 @@ int main(int argc, char * const argv[]) {
             verb = "bring current application's windows to the front";
             break;
         default:
-            errexit("internal error: invalid final action");    
+            errexit("internal error: invalid final action");
     }
     if (err != noErr) osstatusexit(err, "can't %s", verb);
 

@@ -1,12 +1,12 @@
-.Dd Sat Aug  1 2015      \" DATE
+.Dd Sun Jul 29 2018      \" DATE
 .Dt APPSWITCH 1 LOCAL    \" Program name and manual section number 
-.Os appswitch 1.1.2
+.Os appswitch 1.1.3
 .Sh NAME
 .Nm appswitch
-.Nd switch, hide, show, quit, kill or list OS X applications
+.Nd switch, hide, show, quit, kill or list macOS applications
 .Sh SYNOPSIS
 .Nm appswitch
-.Op Fl sShHqkKlLPfF      \" [-sShHqkKlLPfF]
+.Op Fl sShHqkKlLxPfF     \" [-sShHqkKlLxPfF]
 .Op Fl c Ar creator      \" [-c creator]
 .Op Fl i Ar bundleID     \" [-i bundleID]
 .Op Fl a Ar name         \" [-a name]
@@ -14,7 +14,7 @@
 .Op Ar path              \" [path]
 .Sh DESCRIPTION
 .Nm
-controls the ordering and visibility of OS X application windows.
+controls the ordering and visibility of macOS application windows.
 .Nm
 can also list or kill running applications.
 .Ss Matching options
@@ -48,7 +48,7 @@ applications, this is the path to the executable itself.
 If you don't specify any matching options (and also specify an
 application action), the action applies to the frontmost application.
 .Ss Application actions
-These actions apply to the matched application. If multiple
+These actions apply to the matched application.  If multiple
 applications match the supplied criteria, only the first matching
 application is acted upon.  The list option
 .Fl l
@@ -84,7 +84,7 @@ The columns of the listing are as follows:
 The process serial number of the application.
 .It PID
 The process identifier, a positive integer which uniquely identifies
-OS X processes, usable with the
+running macOS processes, usable with the
 .Fl p
 matching option.
 .It TYPE
@@ -93,13 +93,15 @@ The four-character code identifying the process's type, usually
 for most applications or
 .Ql FNDR
 for the Finder.  XPC services (OS X 10.7 and later) have the type
-.Ql XPC! .
-Non-packaged applications will appear with the type
+.Ql XPC!
+and are included if you pass the
+.Fl x
+option. Non-packaged applications appear with type
 .Ql ???? .
 .It CREA
 The four-character code identifying the application's creator, usable with the
 .Fl c
-matching option. Some OS X applications have no creator, appearing
+matching option.  Many macOS applications have no creator, appearing
 as 
 .Ql ???? ;
 for these applications you must use the bundle identifier,
@@ -107,14 +109,14 @@ name or path as match criteria.
 .It NAME
 The user-visible application name, usable with the
 .Fl a
-matching option. This field is truncated to 20 characters; the
+matching option.  This field is truncated to 20 characters; the
 remainder of longer application names is not displayed.
 .It PATH
 The path to the application bundle, or to the application executable
 if the application is not packaged, usable with the
 .Ar path
-matching option. This field is truncated to the window width, or to 80
-characters if the window width cannot be determined.
+matching option. This field is truncated to the window width, or its
+right edge to 80 columns if the window width cannot be determined.
 .El
 .It Fl L
 List applications in a format similar to that of
@@ -124,9 +126,13 @@ truncated to the window width, and a bundle identifier is added in
 parentheses after the path, usable with the
 .Fl i
 matching option.
+.It Fl x
+Include XPC services (type
+.Ql XPC! )
+in lists.
 .It Fl P
 Print the application's process identifier (PID), a positive integer
-and unique identifier for OS X applications.
+and unique identifier for a running macOS process.
 .It Fl f
 Switch to the application, bringing only the frontmost window of the
 application to the front.
