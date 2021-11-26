@@ -18,6 +18,7 @@
 		E1523CD41B685A070035ED5B /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		E1607F080AF3700B001EAB72 /* appswitch */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = appswitch; sourceTree = BUILT_PRODUCTS_DIR; };
 		E16C83CC03F7AF7B00050002 /* README */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = README; sourceTree = "<group>"; };
+		E195675F2750649900F44BEF /* LICENSE */ = {isa = PBXFileReference; lastKnownFileType = text; name = LICENSE; path = ../LICENSE; sourceTree = "<group>"; };
 		E1A0BD4C03EFB64400050001 /* ApplicationServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ApplicationServices.framework; path = /System/Library/Frameworks/ApplicationServices.framework; sourceTree = "<absolute>"; };
 		E1E0321D10AE0A7D00C8C3B6 /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = /System/Library/Frameworks/AppKit.framework; sourceTree = "<absolute>"; };
 /* End PBXFileReference section */
@@ -76,6 +77,7 @@
 			isa = PBXGroup;
 			children = (
 				C6859E970290921104C91782 /* appswitch.1 */,
+				E195675F2750649900F44BEF /* LICENSE */,
 				E16C83CC03F7AF7B00050002 /* README */,
 			);
 			name = Documentation;

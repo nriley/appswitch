@@ -2,7 +2,7 @@
  appswitch - a command-line application switcher
  Nicholas Riley <appswitch@sabi.net>
 
- Copyright (c) 2003-18, Nicholas Riley
+ Copyright (c) 2003-21, Nicholas Riley
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
@@ -100,7 +100,7 @@ void usage(void) {
             "  -a name       match application by name\n"
             , APP_NAME);
     const char *version = [(NSString *)CFBundleGetValueForInfoDictionaryKey(CFBundleGetMainBundle(), CFSTR("CFBundleShortVersionString")) UTF8String];
-    fprintf(stderr, "appswitch %s (c) 2003-18 Nicholas Riley <https://sabi.net/nriley/software/>.\n"
+    fprintf(stderr, "appswitch %s (c) 2003-21 Nicholas Riley <https://sabi.net/nriley/software/>.\n"
             "Please send bugs, suggestions, etc. to <appswitch@sabi.net>.\n", version);
 
     exit(1);
