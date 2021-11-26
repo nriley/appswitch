@@ -79,7 +79,7 @@ static errList ERRS = {
     { 0, NULL }
 };
 
-void usage() {
+void usage(void) {
     fprintf(stderr, "usage: %s [-sShHqkKlLxPfF] [-c creator] [-i bundleID] [-a name] [-p pid] [path]\n"
             "  -s            show application, bring windows to front (do not switch)\n"
             "  -S            show all applications\n"
@@ -265,7 +265,7 @@ void getargs(int argc, char * const argv[]) {
 
 }
 
-ProcessSerialNumber frontApplication() {
+ProcessSerialNumber frontApplication(void) {
     ProcessSerialNumber psn;
     OSStatus err = GetFrontProcess(&psn);
     if (err != noErr) osstatusexit(err, "can't get frontmost process");
